@@ -1,34 +1,30 @@
-﻿using Lesson2;
-
-Calculator calculator = new Calculator();
-
-
-while (true)
+﻿while (true)
 {
     Console.Clear();
-
-    Console.WriteLine("What operation do you want: +, -, /, *");
-    var operation = Console.ReadLine();
 
     Console.WriteLine("Num1: ");
     double num1 = double.Parse(Console.ReadLine());
     Console.WriteLine("Num2: ");
     double num2 = double.Parse(Console.ReadLine());
 
+
+    Console.WriteLine("What operation do you want: +, -, /, *");
+    var operation = Console.ReadLine();
+
     double result = 0;
     switch (operation)
     {
         case "+":
-            result = calculator.Plus(num1, num2);
+            result = Plus(num1, num2);
             break;
         case "-":
-            result = calculator.Minus(num1, num2);
+            result = Minus(num1, num2);
             break;
         case "*":
-            result = calculator.Multiple(num1, num2);
+            result = Multiple(num1, num2);
             break;
         case "/":
-            result = calculator.Drop(num1, num2);
+            result = Drop(num1, num2);
             break;
         default:
             Console.WriteLine("Operation error");
@@ -45,7 +41,29 @@ while (true)
         break;
     }
 }
+double Plus(double num1, double num2)
+{
+    return num1 + num2;
+}
+double Minus(double num1, double num2)
+{
+    return num1 - num2;
+}
 
+double Multiple(double num1, double num2)
+{
+    return num1 * num2;
+}
+
+double Drop(double num1, double num2)
+{
+    if (num1 == 0)
+    {
+        Console.WriteLine("Eror");
+    }
+
+    return num1 / num2;
+}
 
 
 
@@ -79,4 +97,3 @@ while (true)
 //    Console.WriteLine($"Index: {index},  value: {value}");
 //    index++;
 //} while (index < numbers.Length);
-
