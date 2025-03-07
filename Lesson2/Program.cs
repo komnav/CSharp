@@ -1,4 +1,7 @@
-﻿while (true)
+﻿using Lesson2;
+
+Calaculator calaculator = new Calaculator();
+while (true)
 {
     Console.Clear();
 
@@ -15,16 +18,16 @@
     switch (operation)
     {
         case "+":
-            result = Plus(num1, num2);
+            result = calaculator.Plus(num1, num2);
             break;
         case "-":
-            result = Minus(num1, num2);
+            result = calaculator.Minus(num1, num2);
             break;
         case "*":
-            result = Multiple(num1, num2);
+            result = calaculator.Multiple(num1, num2);
             break;
         case "/":
-            result = Drop(num1, num2);
+            result = calaculator.Drop(num1, num2);
             break;
         default:
             Console.WriteLine("Operation error");
@@ -41,29 +44,7 @@
         break;
     }
 }
-double Plus(double num1, double num2)
-{
-    return num1 + num2;
-}
-double Minus(double num1, double num2)
-{
-    return num1 - num2;
-}
 
-double Multiple(double num1, double num2)
-{
-    return num1 * num2;
-}
-
-double Drop(double num1, double num2)
-{
-    if (num1 == 0)
-    {
-        Console.WriteLine("Eror");
-    }
-
-    return num1 / num2;
-}
 
 
 
