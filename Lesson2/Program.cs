@@ -1,9 +1,8 @@
-﻿using System.Threading.Channels;
-
-Operations operations1 = Plus.Plusses;
+﻿Operations operations1 = Plus.Plusses;
 Operations operations2 = Minus.Minuses;
 Operations operations3 = Multiple.Multiples;
 Operations operations4 = Drop.Dropes;
+
 
 while (true)
 {
@@ -23,26 +22,41 @@ while (true)
     {
         case "+":
             result = operations1.Invoke(num1, num2);
+            Func<double, double, string> add = (num1, num2) => $"{num1} + {num2} = {num1 + num2}";
+            var plus = add(num1, num2);
+            Console.WriteLine(plus);
             break;
         case "-":
             result = operations2.Invoke(num1, num2);
+            Func<double, double, string> min = (num1, num2) => $"{num1} + {num2} = {num1 - num2}";
+            var minus = min(num1, num2);
+            Console.WriteLine(minus);
             break;
         case "*":
             result = operations3.Invoke(num1, num2);
+            Func<double, double, string> zarb = (num1, num2) => $"{num1} + {num2} = {num1 * num2}";
+            var multiple = zarb(num1, num2);
+            Console.WriteLine(multiple);
             break;
         case "/":
             result = operations4.Invoke(num1, num2);
+            Func<double, double, string> dr = (num1, num2) => $"{num1} + {num2} = {num1 / num2}";
+            var drop = dr(num1, num2);
+            Console.WriteLine(drop);
             break;
         default:
             Console.WriteLine("Operation error");
             continue;
     }
-    Func<string, double, string> add = (num1, num2) => $"{num1} + {num2} = {result}";
-    var res = add(num1.ToString(), num2);
 
-    Console.WriteLine(res);
+
+
+
     Console.WriteLine($"Result: {result}");
-    Console.WriteLine("Do you want to continue yes or no?");
+
+    Action<string> write = null;
+    write = Console.WriteLine;
+    write(" Do you want to continue yes or no?");
     var operate = Console.ReadLine();
     Console.ReadKey();
 
