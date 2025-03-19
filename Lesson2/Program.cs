@@ -1,7 +1,9 @@
-﻿Plus plus = new Plus();
-Minus minus = new Minus();
-Drop drop = new Drop();
-Multiple multiple = new Multiple();
+﻿using System.Threading.Channels;
+
+Operations operations1 = Plus.Plusses;
+Operations operations2 = Minus.Minuses;
+Operations operations3 = Multiple.Multiples;
+Operations operations4 = Drop.Dropes;
 
 while (true)
 {
@@ -20,22 +22,25 @@ while (true)
     switch (operation)
     {
         case "+":
-            result = plus.Plusses(num1, num2);
+            result = operations1.Invoke(num1, num2);
             break;
         case "-":
-            result = minus.Minuses(num1, num2);
+            result = operations2.Invoke(num1, num2);
             break;
         case "*":
-            result = multiple.Multiples(num1, num2);
+            result = operations3.Invoke(num1, num2);
             break;
         case "/":
-            result = drop.Dropes(num1, num2);
+            result = operations4.Invoke(num1, num2);
             break;
         default:
             Console.WriteLine("Operation error");
             continue;
     }
+    Func<string, double, string> add = (num1, num2) => $"{num1} + {num2} = {result}";
+    var res = add(num1.ToString(), num2);
 
+    Console.WriteLine(res);
     Console.WriteLine($"Result: {result}");
     Console.WriteLine("Do you want to continue yes or no?");
     var operate = Console.ReadLine();
@@ -47,7 +52,7 @@ while (true)
     }
 }
 
-
+delegate double Operations(double num1, double num2);
 
 
 

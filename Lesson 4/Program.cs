@@ -1,9 +1,26 @@
 ﻿public class Person
 {
     public string Name { get; set; }
+
+
+
     public void GetInfo()
     {
         Console.WriteLine($"Original: {Name}");
+    }
+    void test()
+    {
+        int a = 5;
+        object mya = a;
+
+        int b = 5;
+        object myb = b;
+
+
+        bool res1 = a == b;//true
+        bool result = mya == myb;//?
+
+
     }
 }
 

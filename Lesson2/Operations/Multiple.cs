@@ -1,8 +1,8 @@
 ﻿namespace Lesson2.Operations
 {
-    public partial class Multiple
+    public static partial class Multiple
     {
-        public double Multiples(double num1, double num2)
+        public static double Multiples(double num1, double num2)
         {
             return num1 * num2;
         }

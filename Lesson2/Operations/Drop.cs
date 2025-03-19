@@ -1,9 +1,8 @@
 ﻿namespace Lesson2.Operations
 {
-    public partial class Drop
+    public static partial class Drop
     {
-
-        public double Dropes(double num1, double num2)
+        public static double Dropes(double num1, double num2)
         {
             if (num1 == 0)
             {
