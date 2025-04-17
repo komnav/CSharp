@@ -9,9 +9,11 @@ while (true)
     Console.Clear();
 
     Console.WriteLine("Num1: ");
-    double num1 = double.Parse(Console.ReadLine());
+    var num1 = double.Parse(Console.ReadLine());
     Console.WriteLine("Num2: ");
-    double num2 = double.Parse(Console.ReadLine());
+    var num2 = double.Parse(Console.ReadLine());
+
+    Console.WriteLine("please enter correct number");
 
 
     Console.WriteLine("What operation do you want: +, -, /, *");
@@ -21,25 +23,25 @@ while (true)
     switch (operation)
     {
         case "+":
-            result = operations1.Invoke(num1, num2);
+            result = operations1(num1, num2);
             Func<double, double, string> add = (num1, num2) => $"{num1} + {num2} = {num1 + num2}";
             var plus = add(num1, num2);
             Console.WriteLine(plus);
             break;
         case "-":
-            result = operations2.Invoke(num1, num2);
+            result = operations2(num1, num2);
             Func<double, double, string> min = (num1, num2) => $"{num1} + {num2} = {num1 - num2}";
             var minus = min(num1, num2);
             Console.WriteLine(minus);
             break;
         case "*":
-            result = operations3.Invoke(num1, num2);
+            result = operations3(num1, num2);
             Func<double, double, string> zarb = (num1, num2) => $"{num1} + {num2} = {num1 * num2}";
             var multiple = zarb(num1, num2);
             Console.WriteLine(multiple);
             break;
         case "/":
-            result = operations4.Invoke(num1, num2);
+            result = operations4(num1, num2);
             Func<double, double, string> dr = (num1, num2) => $"{num1} + {num2} = {num1 / num2}";
             var drop = dr(num1, num2);
             Console.WriteLine(drop);

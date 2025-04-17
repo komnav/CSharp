@@ -20,6 +20,8 @@
         bool res1 = a == b;//true
         bool result = mya == myb;//?
 
+        
+
 
     }
 }
