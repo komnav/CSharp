@@ -1,4 +1,6 @@
-﻿public class Person
+﻿namespace Lesson_4;
+
+public class Person
 {
     public string Name { get; set; }
 

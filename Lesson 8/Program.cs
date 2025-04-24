@@ -1,5 +1,5 @@
-﻿using System.Collections.Concurrent;
-using Lesson_8;
+﻿using Lesson_8;
+
 //
 // for (int i = 0; i < 10; i++)
 // {
@@ -146,37 +146,40 @@ for (int i = 0; i < 6; i++)
     Reader reader = new Reader(i);
 }
 
-class Reader
+namespace Lesson_8
 {
-    static Semaphore sem = new Semaphore(3, 3);
-    Thread _thread;
-    int count = 3;
-
-    public Reader(int i)
+    class Reader
     {
-        _thread = new Thread(Read);
-        _thread.Name = $"Reader: {i}";
-        _thread.Start();
-    }
+        static Semaphore sem = new Semaphore(3, 3);
+        Thread _thread;
+        int count = 3;
 
-
-    public void Read()
-    {
-        while (count > 0)
+        public Reader(int i)
         {
-            sem.WaitOne();
+            _thread = new Thread(Read);
+            _thread.Name = $"Reader: {i}";
+            _thread.Start();
+        }
 
-            Console.WriteLine($"{Thread.CurrentThread.Name} enter the library");
 
-            Console.WriteLine($"{Thread.CurrentThread.Name} read");
-            Thread.Sleep(1000);
+        public void Read()
+        {
+            while (count > 0)
+            {
+                sem.WaitOne();
 
-            Console.WriteLine($"{Thread.CurrentThread.Name} leave library");
+                Console.WriteLine($"{Thread.CurrentThread.Name} enter the library");
 
-            sem.Release();
+                Console.WriteLine($"{Thread.CurrentThread.Name} read");
+                Thread.Sleep(1000);
 
-            count--;
-            Thread.Sleep(1000);
+                Console.WriteLine($"{Thread.CurrentThread.Name} leave library");
+
+                sem.Release();
+
+                count--;
+                Thread.Sleep(1000);
+            }
         }
     }
 }

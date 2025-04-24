@@ -1,4 +1,4 @@
-﻿global using Lesson2.Operations;
+﻿global using Lesson2;
 global using Lesson2;
 
 

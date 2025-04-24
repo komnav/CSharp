@@ -19,6 +19,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lesson 7", "Lesson 7\Lesson
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lesson 8", "Lesson 8\Lesson 8.csproj", "{7624A54C-AF0C-4ABE-849B-4C152E4303DC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestaurantWebApi", "RestaurantWebApi\RestaurantWebApi.csproj", "{EEE5B02A-D798-4FEB-B6B5-1BB0386A427C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lesson9", "Lesson9\Lesson9.csproj", "{E913C3C8-7256-4D12-B7F2-25ABC7B3CEBD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +61,14 @@ Global
 		{7624A54C-AF0C-4ABE-849B-4C152E4303DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7624A54C-AF0C-4ABE-849B-4C152E4303DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7624A54C-AF0C-4ABE-849B-4C152E4303DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EEE5B02A-D798-4FEB-B6B5-1BB0386A427C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EEE5B02A-D798-4FEB-B6B5-1BB0386A427C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EEE5B02A-D798-4FEB-B6B5-1BB0386A427C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EEE5B02A-D798-4FEB-B6B5-1BB0386A427C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E913C3C8-7256-4D12-B7F2-25ABC7B3CEBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E913C3C8-7256-4D12-B7F2-25ABC7B3CEBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E913C3C8-7256-4D12-B7F2-25ABC7B3CEBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E913C3C8-7256-4D12-B7F2-25ABC7B3CEBD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

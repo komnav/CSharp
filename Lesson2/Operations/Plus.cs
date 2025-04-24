@@ -1,8 +1,11 @@
-﻿namespace Lesson2.Operations
+﻿using System.Numerics;
+
+namespace Lesson2.Operations
 {
     public static partial class Plus
     {
-        public static double Plusses(double num1, double num2)
+        public static T Plusses<T>(T num1, T num2)
+        where T: INumber<T>
         {
             return num1 + num2;
         }

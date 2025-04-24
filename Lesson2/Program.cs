@@ -1,4 +1,6 @@
-﻿Operations operations1 = Plus.Plusses;
+﻿using Lesson2.Operations;
+
+Operations operations1 = Plus.Plusses;
 Operations operations2 = Minus.Minuses;
 Operations operations3 = Multiple.Multiples;
 Operations operations4 = Drop.Dropes;
