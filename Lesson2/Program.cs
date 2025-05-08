@@ -1,4 +1,4 @@
-﻿using Lesson2.Operations;
+﻿using Lesson2.Operation;
 
 Operations operations1 = Plus.Plusses;
 Operations operations2 = Minus.Minuses;
@@ -70,7 +70,10 @@ while (true)
     }
 }
 
-delegate double Operations(double num1, double num2);
+namespace Lesson2
+{
+    delegate double Operations(double num1, double num2);
+}
 
 
 

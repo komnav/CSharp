@@ -1,4 +1,4 @@
-namespace RestaurantWebApi.Model.Enums;
+namespace RestaurantWeb.Model.Enums;
 
 public enum TableType
 {

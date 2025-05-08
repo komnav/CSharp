@@ -1,4 +1,4 @@
-﻿namespace Lesson2.Operations
+﻿namespace Lesson2.Operation
 {
     public static partial class Drop
     {
@@ -6,7 +6,7 @@
         {
             if (num1 == 0)
             {
-                Console.WriteLine("Eror");
+                Console.WriteLine("Error");
             }
 
             return num1 / num2;

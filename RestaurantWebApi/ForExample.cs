@@ -1,4 +1,4 @@
-namespace RestaurantWebApi;
+namespace RestaurantWeb;
 
 public class ForExample
 {

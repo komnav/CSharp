@@ -1,0 +1,12 @@
+@model List<ASP.NETWithYoutube.Models.User>
+@{
+    ViewData["Title"] = "PrintInfo";
+}
+@* <link rel="stylesheet" href="~/css/card.css"/> *@
+
+<div class="card">
+    @foreach (var item in Model)
+    {
+        <p class="card-text">@item.Name, @item.Age</p>
+    }
+</div>

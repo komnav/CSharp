@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace Lesson2.Operations
+namespace Lesson2.Operation
 {
     public static partial class Plus
     {

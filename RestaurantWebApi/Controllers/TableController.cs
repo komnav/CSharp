@@ -1,51 +1,89 @@
 using Microsoft.AspNetCore.Mvc;
+using RestaurantWeb.DTOs.TableDTOs;
+using RestaurantWeb.Extensions;
+using RestaurantWeb.Model;
+using RestaurantWeb.Repopsitories;
 using RestaurantWebApi.DTOs.TableDTOs;
-using RestaurantWebApi.Model;
-using RestaurantWebApi.Model.Enums;
 
-namespace RestaurantWebApi.Controllers;
+namespace RestaurantWeb.Controllers;
 
 [ApiController]
 [Route("Table")]
 public class TableController : Controller
 {
-    private static readonly List<Table> Tables =
-    [
-        new Table
-        {
-            Id = 1,
-            Number = 1,
-            Capacity = 100,
-            Type = TableType.Cabin
-        },
-        new Table
-        {
-            Id = 2,
-            Number = 2,
-            Capacity = 50,
-            Type = TableType.Table
-        },
-        new Table
-        {
-            Id = 3,
-            Number = 3,
-            Capacity = 10,
-            Type = TableType.Cabin
-        }
-    ];
+    [HttpGet]
+    public IEnumerable<TableDto> GetAll([FromServices] ITableRepository tableRepository)
+    {
+        return tableRepository.GetAll().Select(c => c.ToDto());
+    }
+
+    [HttpGet("{id:guid}")]
+    public IActionResult GetById(Guid id, [FromServices] ITableRepository tableRepository)
+    {
+        var table = tableRepository.GetById(id);
+        return Ok(table.ToDto());
+    }
 
     [HttpPost]
-    public IActionResult CreateTable([FromBody] CreateTable? createTable)
+    public IActionResult Create(
+        CreateTable createTable,
+        [FromServices] ITableRepository tableRepository
+    )
     {
-        if (createTable is null)
-            return BadRequest("Table is null");
-
-        var createdTable = new Table
+        var createTables = new Table
         {
+            Id = Guid.NewGuid(),
             Number = createTable.Number,
             Capacity = createTable.Capacity,
-            Type = createTable.Type,
+            Type = createTable.Type
         };
-        return Ok();
+        tableRepository.Create(createTables);
+        return Created($"/api/client/{createTable.Number}", createTable);
+    }
+
+    [HttpPut]
+    public IActionResult Update(
+        Guid id, UpdateTable updateTable,
+        [FromServices] ITableRepository tableRepository)
+    {
+        var table = tableRepository.GetById(id);
+
+        table.Number = updateTable.Number;
+        table.Capacity = updateTable.Capacity;
+        table.Type = updateTable.Type;
+
+        tableRepository.TryUpdate(id, table);
+        return Ok(table.ToDto());
+    }
+
+    [HttpPatch]
+    public IActionResult UpdateSpecificProperties(
+        Guid id, PatchUpdateTable updateTable,
+        [FromServices] ITableRepository tableRepository)
+    {
+        var serviceTable = tableRepository.GetById(id);
+
+        var serviceTableType = serviceTable.GetType();
+        var properties = updateTable.GetType().GetProperties();
+        foreach (var property in properties)
+        {
+            var value = property.GetValue(updateTable);
+            if (value is not null)
+            {
+                var oldProperty = serviceTableType.GetProperty(property.Name);
+                if (oldProperty?.CanWrite == true)
+                    oldProperty.SetValue(serviceTable, value);
+            }
+        }
+
+        tableRepository.TryUpdate(id, serviceTable);
+        return Ok(serviceTable.ToDto());
+    }
+
+    [HttpDelete]
+    public IActionResult Delete(Guid id, [FromServices] ITableRepository tableRepository)
+    {
+        var deleteTable = tableRepository.Delete(id);
+        return Ok(deleteTable.ToDto());
     }
 }

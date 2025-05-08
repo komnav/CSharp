@@ -1,9 +1,7 @@
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using RestaurantWebApi.DTOs.UserDTOs;
-using RestaurantWebApi.Model;
-
-namespace RestaurantWebApi.Controllers;
+using RestaurantWeb.DTOs.UserDTOs;
+using RestaurantWeb.Model;
+namespace RestaurantWeb.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]

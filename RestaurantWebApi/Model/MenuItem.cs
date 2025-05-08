@@ -1,6 +1,6 @@
-using RestaurantWebApi.Model.Enums;
+using RestaurantWeb.Model.Enums;
 
-namespace RestaurantWebApi.Model;
+namespace RestaurantWeb.Model;
 
 public class MenuItem
 {
