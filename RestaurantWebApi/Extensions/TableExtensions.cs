@@ -1,10 +1,9 @@
 using RestaurantWeb.DTOs.TableDTOs;
 using RestaurantWeb.Model;
-using RestaurantWebApi.DTOs.TableDTOs;
 
 namespace RestaurantWeb.Extensions;
 
-public static class WorkerExtensions
+public static class TableExtensions
 {
     public static TableDto ToDto(this Table table)
     {

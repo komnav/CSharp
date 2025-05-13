@@ -1,73 +1,91 @@
+using System.ComponentModel.DataAnnotations;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using RestaurantWeb.DTOs.TableDTOs;
 using RestaurantWeb.Extensions;
 using RestaurantWeb.Model;
-using RestaurantWeb.Repopsitories;
-using RestaurantWebApi.DTOs.TableDTOs;
+using RestaurantWeb.Repositories;
+using RestaurantWeb.Validations;
 
 namespace RestaurantWeb.Controllers;
 
 [ApiController]
 [Route("Table")]
-public class TableController : Controller
+public class TableController : ControllerBase
 {
-    [HttpGet]
-    public IEnumerable<TableDto> GetAll([FromServices] ITableRepository tableRepository)
+    private readonly ITableRepository _tableRepository;
+    private readonly IMapper _mapper;
+    private readonly TableDtoValidator _validator;
+
+    public TableController(ITableRepository tableRepository, [FromServices] IMapper mapper)
     {
-        return tableRepository.GetAll().Select(c => c.ToDto());
+        _tableRepository = tableRepository;
+        _mapper = mapper;
+    }
+
+    [HttpGet]
+    public IEnumerable<TableDto> GetAll()
+    {
+        var table = _tableRepository.GetAll();
+        var tableDto = _mapper.Map<IEnumerable<TableDto>>(table);
+        return tableDto;
     }
 
     [HttpGet("{id:guid}")]
-    public IActionResult GetById(Guid id, [FromServices] ITableRepository tableRepository)
+    public IActionResult GetById(Guid id)
     {
-        var table = tableRepository.GetById(id);
-        return Ok(table.ToDto());
+        var table = _tableRepository.GetById(id);
+        var result = _mapper.Map<TableDto>(table);
+        return Ok(result);
     }
 
     [HttpPost]
     public IActionResult Create(
-        CreateTable createTable,
-        [FromServices] ITableRepository tableRepository
-    )
+        CreateTableDto createTableDto)
     {
+        var validation = _validator.Validate(createTableDto);
+        if (!validation.IsValid)
+        {
+            return BadRequest(validation.Errors);
+        }
         var createTables = new Table
         {
-            Id = Guid.NewGuid(),
-            Number = createTable.Number,
-            Capacity = createTable.Capacity,
-            Type = createTable.Type
+            Number = createTableDto.Number,
+            Capacity = createTableDto.Capacity,
+            Type = createTableDto.Type
         };
-        tableRepository.Create(createTables);
-        return Created($"/api/client/{createTable.Number}", createTable);
+        _tableRepository.Create(createTables);
+        return Ok(createTables.ToDto());
     }
 
     [HttpPut]
-    public IActionResult Update(
-        Guid id, UpdateTable updateTable,
-        [FromServices] ITableRepository tableRepository)
+    public IActionResult Update
+    (Guid id, UpdateTableDto updateTableDto,
+        [FromServices] MapsterMapper.IMapper mapper)
     {
-        var table = tableRepository.GetById(id);
+        var table = _tableRepository.GetById(id);
 
-        table.Number = updateTable.Number;
-        table.Capacity = updateTable.Capacity;
-        table.Type = updateTable.Type;
+        table.Number = updateTableDto.Number;
+        table.Capacity = updateTableDto.Capacity;
+        table.Type = updateTableDto.Type;
 
-        tableRepository.TryUpdate(id, table);
+        mapper.Map(updateTableDto, table);
+        _tableRepository.TryUpdate(id, table);
         return Ok(table.ToDto());
     }
 
     [HttpPatch]
     public IActionResult UpdateSpecificProperties(
-        Guid id, PatchUpdateTable updateTable,
-        [FromServices] ITableRepository tableRepository)
+        Guid id, PatchUpdateTableDto updateTableDto
+    )
     {
-        var serviceTable = tableRepository.GetById(id);
+        var serviceTable = _tableRepository.GetById(id);
 
         var serviceTableType = serviceTable.GetType();
-        var properties = updateTable.GetType().GetProperties();
+        var properties = updateTableDto.GetType().GetProperties();
         foreach (var property in properties)
         {
-            var value = property.GetValue(updateTable);
+            var value = property.GetValue(updateTableDto);
             if (value is not null)
             {
                 var oldProperty = serviceTableType.GetProperty(property.Name);
@@ -76,14 +94,14 @@ public class TableController : Controller
             }
         }
 
-        tableRepository.TryUpdate(id, serviceTable);
+        _tableRepository.TryUpdate(id, serviceTable);
         return Ok(serviceTable.ToDto());
     }
 
     [HttpDelete]
-    public IActionResult Delete(Guid id, [FromServices] ITableRepository tableRepository)
+    public IActionResult Delete(Guid id)
     {
-        var deleteTable = tableRepository.Delete(id);
+        var deleteTable = _tableRepository.Delete(id);
         return Ok(deleteTable.ToDto());
     }
 }

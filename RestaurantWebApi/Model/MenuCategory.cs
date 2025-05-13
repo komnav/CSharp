@@ -1,10 +1,9 @@
 namespace RestaurantWeb.Model;
 
-public class MenuCategory
+public class MenuCategory: IEntity
 {
-    public int Id { get; set; }
-    
     public required string Name { get; set; }
     
     public int? ParentId { get; set; }
+    public Guid Id { get; set; }
 }

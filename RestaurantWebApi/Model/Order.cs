@@ -2,10 +2,8 @@ using RestaurantWeb.Model.Enums;
 
 namespace RestaurantWeb.Model;
 
-public class Order
+public class Order: IEntity
 {
-    public int Id { get; set; }
-    
     public int TableId { get; set; }
     
     public Table? Table { get; set; }
@@ -13,4 +11,5 @@ public class Order
     public DateTime DateTime { get; set; }
     
     public OrdersStatus Status { get; set; }
+    public Guid Id { get; set; }
 }
