@@ -92,7 +92,6 @@ public class ReservationController : ControllerBase
                     oldProperty.SetValue(serviceReservation, value);
             }
         }
-
         var updateReservation = _reservationRepository.TryUpdate(id, serviceReservation);
         var result = _mapper.Map<ReservationDto>(updateReservation);
         return Ok(result);

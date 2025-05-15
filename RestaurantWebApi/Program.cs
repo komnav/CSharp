@@ -4,6 +4,7 @@ using RestaurantWeb.Extensions;
 using RestaurantWeb.Mappers;
 using RestaurantWeb.Middlewares;
 using RestaurantWeb.Repositories;
+using RestaurantWeb.Services;
 using RestaurantWeb.Validations;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,9 +17,10 @@ builder.Services.AddSingleton<IMenuItemRepository, MenuItemRepository>();
 builder.Services.AddSingleton<IMenuCategoryRepository, MenuCategoryRepository>();
 builder.Services.AddSingleton<IContactRepository, ContactRepository>();
 
+builder.Services.AddScoped<ITableService, TableService>();
+
 builder.Services.AddControllers();
 
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
 builder.Services.AddSwaggerGen(
@@ -46,7 +48,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseMiddleware<ExceptionHandlerMiddleware>();
+//app.UseMiddleware<ExceptionHandlerMiddleware>();
 
 app.UseAuthorization();
 app.MapServerAPIs();

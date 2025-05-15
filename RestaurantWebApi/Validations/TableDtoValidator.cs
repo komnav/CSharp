@@ -11,7 +11,5 @@ public class TableDtoValidator : AbstractValidator<CreateTableDto>
             .NotEmpty();
         RuleFor(c => c.Number)
             .NotEmpty();
-        RuleFor(c => c.Type)
-            .NotEmpty();
     }
 }

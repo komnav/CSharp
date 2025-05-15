@@ -5,17 +5,19 @@ namespace RestaurantWeb.Repositories;
 public class Repository<TEntity> : IRepository<TEntity>
     where TEntity : class, IEntity
 {
-    private readonly Dictionary<Guid, IEntity> _entities = [];
+    private readonly Dictionary<Guid, TEntity> _entities = [];
 
-    IEnumerable<TEntity> IRepository<TEntity>.GetAll()
+
+    public IEnumerable<TEntity> GetAll()
     {
-        throw new NotImplementedException();
+        return _entities.Values;
     }
 
     public TEntity GetById(Guid id)
     {
         _entities.TryGetValue(id, out var entity);
-        return (TEntity)entity;
+        if (entity == null) throw new KeyNotFoundException();
+        return entity;
     }
 
     public void Create(TEntity entity)
