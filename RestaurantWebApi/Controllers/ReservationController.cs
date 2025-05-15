@@ -4,96 +4,66 @@ using RestaurantWeb.DTOs.ReservationDTOs;
 using RestaurantWeb.DTOs.TableDTOs;
 using RestaurantWeb.Model;
 using RestaurantWeb.Repositories;
+using RestaurantWeb.Services;
 
 namespace RestaurantWeb.Controllers;
 
 [ApiController]
 [Route("api/Reservation")]
-public class ReservationController : ControllerBase
+public class ReservationController(IReservationService service) : ControllerBase
 {
-    private readonly IReservationRepository _reservationRepository;
-    private readonly IMapper _mapper;
-
-    public ReservationController(IReservationRepository reservationRepository, [FromServices] IMapper mapper)
-    {
-        _reservationRepository = reservationRepository;
-        _mapper = mapper;
-    }
-
     [HttpGet("{id:guid}")]
     public IActionResult GetById(Guid id)
     {
-        var getReservationById = _reservationRepository.GetById(id);
-        var result = _mapper.Map<ReservationDto>(getReservationById);
-        return Ok(result);
+        var getReservationById = service.GetById(id);
+        return Ok(getReservationById);
     }
 
     [HttpGet]
     public IEnumerable<ReservationDto> GetAll()
     {
-        var getReservation = _reservationRepository.GetAll();
-        var result = _mapper.Map<IEnumerable<ReservationDto>>(getReservation);
-        return result;
+        var getReservation = service.GetAll();
+        return getReservation;
     }
 
     [HttpPost]
     public IActionResult Create([FromBody] CreateReservationDto reservationDto)
     {
-        var createReservation = new Reservation
+        var (validationResult, createReservation) = service.Create(reservationDto);
+        if (validationResult is not null)
         {
-            Id = Guid.NewGuid(),
-            TableId = reservationDto.TableId,
-            From = reservationDto.From,
-            To = reservationDto.To,
-            Notes = reservationDto.Notes,
-            Status = reservationDto.Status
-        };
-        _reservationRepository.Create(createReservation);
+            var errors = validationResult.Errors
+                .Select(e => new { e.PropertyName, e.ErrorMessage });
+            return BadRequest(new { Errors = errors });
+        }
+
         return Ok(createReservation);
     }
 
     [HttpDelete]
     public IActionResult Delete(Guid id)
     {
-        var deleteReservation = _reservationRepository.Delete(id);
-        var result = _mapper.Map<ReservationDto>(deleteReservation);
-        return Ok(result);
+        var result = service.TryDelete(id);
+        if (!result)
+            return BadRequest();
+        return Ok();
     }
 
     [HttpPut]
     public IActionResult Update(Guid id, [FromBody] UpdateReservationDto reservationDto)
     {
-        var reservationForUpdate = _reservationRepository.GetById(id);
-        if (reservationForUpdate == null) throw new Exception("Not found");
-
-        reservationForUpdate.TableId = reservationDto.TableId;
-        reservationForUpdate.From = reservationDto.From;
-        reservationForUpdate.To = reservationDto.To;
-        reservationForUpdate.Notes = reservationDto.Notes;
-        reservationForUpdate.Status = reservationDto.Status;
-
-        var result = _mapper.Map(reservationForUpdate, reservationForUpdate);
-        return Ok(result);
+        var result = service.TryUpdate(id, reservationDto);
+        if (!result)
+            return BadRequest();
+        return Ok();
     }
 
     [HttpPatch]
     public IActionResult UpdateSpecificProperties(Guid id, PatchUpdateReservationDto reservationDto)
     {
-        var serviceReservation = _reservationRepository.GetById(id);
-        var serviceReservationType = serviceReservation.GetType();
-        var properties = reservationDto.GetType().GetProperties();
-        foreach (var property in properties)
-        {
-            var value = property.GetValue(reservationDto);
-            if (value is not null)
-            {
-                var oldProperty = serviceReservationType.GetProperty(property.Name);
-                if (oldProperty?.CanWrite == true)
-                    oldProperty.SetValue(serviceReservation, value);
-            }
-        }
-        var updateReservation = _reservationRepository.TryUpdate(id, serviceReservation);
-        var result = _mapper.Map<ReservationDto>(updateReservation);
-        return Ok(result);
+        var result = service.TryUpdateSpecificProperties(id, reservationDto);
+        if (!result)
+            return BadRequest();
+        return Ok();
     }
 }

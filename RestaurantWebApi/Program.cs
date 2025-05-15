@@ -2,7 +2,6 @@ using FluentValidation;
 using Microsoft.OpenApi.Models;
 using RestaurantWeb.Extensions;
 using RestaurantWeb.Mappers;
-using RestaurantWeb.Middlewares;
 using RestaurantWeb.Repositories;
 using RestaurantWeb.Services;
 using RestaurantWeb.Validations;
@@ -18,11 +17,10 @@ builder.Services.AddSingleton<IMenuCategoryRepository, MenuCategoryRepository>()
 builder.Services.AddSingleton<IContactRepository, ContactRepository>();
 
 builder.Services.AddScoped<ITableService, TableService>();
+builder.Services.AddScoped<IReservationService, ReservationService>();
 
 builder.Services.AddControllers();
-
 builder.Services.AddOpenApi();
-
 builder.Services.AddSwaggerGen(
     c => c.SwaggerDoc(
         "v1", new OpenApiInfo

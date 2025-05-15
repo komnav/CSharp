@@ -6,7 +6,7 @@ public class Order: IEntity
 {
     public int TableId { get; set; }
     
-    public Table? Table { get; set; }
+    public Table Table { get; set; }
     
     public DateTime DateTime { get; set; }
     

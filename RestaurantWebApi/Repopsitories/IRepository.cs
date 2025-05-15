@@ -12,5 +12,5 @@ public interface IRepository<TEntity>
 
     bool TryUpdate(Guid id, TEntity updateTable);
 
-    TEntity? Delete(Guid id);
+    TEntity Delete(Guid id);
 }

@@ -42,7 +42,6 @@ public class TableController(ITableService tableService) : ControllerBase
         var table = tableService.TryUpdate(id, updateTableDto);
         if (!table)
             return NotFound();
-
         return Ok();
     }
 
@@ -52,7 +51,6 @@ public class TableController(ITableService tableService) : ControllerBase
         var result = tableService.TryUpdateSpecificProperties(id, updateTableDto);
         if (!result)
             return NotFound();
-
         return Ok();
     }
 
@@ -62,7 +60,6 @@ public class TableController(ITableService tableService) : ControllerBase
         var deleteTable = tableService.TryDelete(id);
         if (!deleteTable)
             return NotFound();
-
         return Ok();
     }
 }
