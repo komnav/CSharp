@@ -15,15 +15,16 @@ public class ReservationController(IReservationService service) : ControllerBase
     [HttpGet("{id:guid}")]
     public IActionResult GetById(Guid id)
     {
-        var getReservationById = service.GetById(id);
-        return Ok(getReservationById);
+        var reservation = service.GetById(id);
+        if (reservation.TableId < 0)
+            return NotFound();
+        return Ok(reservation);
     }
 
     [HttpGet]
     public IEnumerable<ReservationDto> GetAll()
     {
-        var getReservation = service.GetAll();
-        return getReservation;
+        return service.GetAll();
     }
 
     [HttpPost]
@@ -37,7 +38,7 @@ public class ReservationController(IReservationService service) : ControllerBase
             return BadRequest(new { Errors = errors });
         }
 
-        return Ok(createReservation);
+        return Created($"/api/table/{createReservation.Id}", createReservation);
     }
 
     [HttpDelete]

@@ -4,7 +4,7 @@ namespace RestaurantWeb.Repositories;
 
 public interface IContactRepository
 {
-    IEnumerable<Contact> GetAll();
+    List<Contact> GetAll();
 
     Contact GetById(Guid id);
 

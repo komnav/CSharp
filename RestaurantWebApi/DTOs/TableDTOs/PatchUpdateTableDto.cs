@@ -2,7 +2,7 @@ namespace RestaurantWeb.DTOs.TableDTOs;
 
 public record PatchUpdateTableDto()
 {
-    int Number { get; init; }
+   public int Number { get; init; }
     
-    int Capacity { get; init; }
+   public int Capacity { get; init; }
 }

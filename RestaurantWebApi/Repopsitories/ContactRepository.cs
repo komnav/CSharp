@@ -1,38 +1,47 @@
+using Microsoft.EntityFrameworkCore;
+using RestaurantWeb.DataBase;
 using RestaurantWeb.Model;
 
 namespace RestaurantWeb.Repositories;
 
-public class ContactRepository : IContactRepository
+public class ContactRepository(RestaurantContext context) : IContactRepository
 {
-    private readonly Dictionary<Guid, Contact> _contacts = [];
+    private readonly RestaurantContext _context = context;
 
-    public IEnumerable<Contact> GetAll()
+    public List<Contact> GetAll()
     {
-        return _contacts.Values;
+        return _context.Contacts.ToList();
     }
 
     public Contact GetById(Guid id)
     {
-        _contacts.TryGetValue(id, out var contact);
-        return contact;
+        return _context.Contacts.FirstOrDefault(x => x.Id == id);
     }
 
-    public void Create(Contact table)
+    public void Create(Contact contact)
     {
-        _contacts.Add(table.Id, table);
+        _context.Add(context);
+        _context.SaveChanges();
     }
 
-    public bool TryUpdate(Guid id, Contact updateTable)
+    public bool TryUpdate(Guid id, Contact updateContact)
     {
-        if (_contacts.ContainsKey(id))
-            _contacts[id] = updateTable;
-        return true;
+        _context.Contacts
+            .Where(x => x.Id == id)
+            .ExecuteUpdate(x => x
+                .SetProperty(contact => contact.FirstName, updateContact.FirstName)
+                .SetProperty(contact => contact.LastName, updateContact.LastName)
+                .SetProperty(contact => contact.Email, updateContact.Email)
+                .SetProperty(contact => contact.PhoneNumber, updateContact.PhoneNumber)
+                .SetProperty(contact => contact.Address, updateContact.Address));
+        return _context.SaveChanges() > 0;
     }
 
     public Contact Delete(Guid id)
     {
-        _contacts.TryGetValue(id, out var contact);
-        _contacts.Remove(id);
+        var contact = GetById(id);
+        _context.Contacts.Where(x => x.Id == id).ExecuteDelete();
+        _context.SaveChanges();
         return contact;
     }
 }

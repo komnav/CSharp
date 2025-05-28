@@ -4,7 +4,7 @@ namespace RestaurantWeb.Repositories;
 
 public interface IMenuItemRepository
 {
-    IEnumerable<MenuItem> GetAll();
+    List<MenuItem> GetAll();
 
     MenuItem GetById(Guid id);
 

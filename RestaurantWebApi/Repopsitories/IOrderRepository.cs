@@ -4,7 +4,7 @@ namespace RestaurantWeb.Repositories;
 
 public interface IOrderRepository
 {
-    IEnumerable<Order> GetAll();
+    List<Order> GetAll();
 
     Order GetById(Guid id);
 

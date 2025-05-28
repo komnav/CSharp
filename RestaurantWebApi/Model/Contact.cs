@@ -1,7 +1,9 @@
 namespace RestaurantWeb.Model;
 
-public class Contact : IEntity
+public class Contact
 {
+    public Guid Id { get; set; }
+
     public required string FirstName { get; set; }
 
     public string LastName { get; set; }
@@ -13,5 +15,4 @@ public class Contact : IEntity
     public string PhoneNumber { get; set; }
 
     public string Address { get; set; }
-    public Guid Id { get; set; }
 }

@@ -22,20 +22,19 @@ public class ReservationService(
 
     public ReservationDto GetById(Guid id)
     {
-        var getReservationById = reservationRepository.GetById(id);
-        var result = mapper.Map<ReservationDto>(getReservationById);
+        var serviceSideReservation = reservationRepository.GetById(id);
+        var result = mapper.Map<ReservationDto>(serviceSideReservation);
         return result;
     }
-
     public (ValidationResult validationResult, ReservationDto dto) Create(CreateReservationDto reservation)
     {
         var validator = serviceProvider.GetService<IValidator<CreateReservationDto>>();
         if (validator != null)
         {
-            var validationResult = validator.Validate(reservation);
-            if (validationResult.IsValid)
+            var result = validator.Validate(reservation);
+            if (!result.IsValid)
             {
-                return (validationResult, null);
+                return (result, null);
             }
         }
 
@@ -48,8 +47,8 @@ public class ReservationService(
             Status = reservation.Status
         };
         reservationRepository.Create(createReservation);
-        var result = mapper.Map<ReservationDto>(createReservation);
-        return (null, result);
+        var createReservationDto = mapper.Map<ReservationDto>(createReservation);
+        return (null, createReservationDto);
     }
 
     public bool TryUpdate(Guid id, UpdateReservationDto updateReservation)

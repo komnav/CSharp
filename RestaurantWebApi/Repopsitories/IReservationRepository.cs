@@ -4,7 +4,7 @@ namespace RestaurantWeb.Repositories;
 
 public interface IReservationRepository
 {
-    IEnumerable<Reservation> GetAll();
+    List<Reservation> GetAll();
 
     Reservation GetById(Guid id);
 

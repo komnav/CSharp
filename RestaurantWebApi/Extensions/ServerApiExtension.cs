@@ -2,7 +2,7 @@ namespace RestaurantWeb.Extensions;
 
 public static class ServerApiExtension
 {
-    public static void MapServerAPIs(this WebApplication app)
+    public static void MapServerApIs(this WebApplication app)
     {
         app.MapGet("Serverinfo", ()
             =>

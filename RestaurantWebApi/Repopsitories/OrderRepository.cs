@@ -1,39 +1,47 @@
+using Microsoft.EntityFrameworkCore;
+using RestaurantWeb.DataBase;
 using RestaurantWeb.Model;
 
 namespace RestaurantWeb.Repositories;
 
-public class OrderRepository : IOrderRepository
+public class OrderRepository(RestaurantContext context) : IOrderRepository
 {
-    private readonly Dictionary<Guid, Order> _orders = [];
+    private readonly RestaurantContext _context = context;
 
-    public IEnumerable<Order> GetAll()
+    public List<Order> GetAll()
     {
-        return _orders.Values;
+        return _context.Orders.ToList();
     }
 
     public Order GetById(Guid id)
     {
-        _orders.TryGetValue(id, out var order);
-        return order;
+        return _context.Orders.FirstOrDefault(x => x.Id == id);
     }
 
-    public void Create(Order table)
+    public void Create(Order order)
     {
-        _orders.Add(table.Id, table);
+        _context.Add(order);
+        _context.SaveChanges();
     }
 
-    public bool TryUpdate(Guid id, Order updateTable)
+    public bool TryUpdate(Guid id, Order updatedOrder)
     {
-        if (_orders.ContainsKey(id)) return false;
-        _orders[id] = updateTable;
-        return true;
+        _context.Orders
+            .Where(x => x.Id == id)
+            .ExecuteUpdate(x => x
+                .SetProperty(order => order.TableId, updatedOrder.TableId)
+                .SetProperty(order => order.FoodId, updatedOrder.FoodId)
+                .SetProperty(order => order.MenuItem, updatedOrder.MenuItem)
+                .SetProperty(order => order.DateTime, updatedOrder.DateTime)
+                .SetProperty(order => order.Status, updatedOrder.Status));
+        return _context.SaveChanges() > 0;
     }
 
     public Order Delete(Guid id)
     {
-        _orders.TryGetValue(id, out var order);
-        if (order is not null)
-            _orders.Remove(id);
+        var order = GetById(id);
+        _context.Orders.Where(x => x.Id == id).ExecuteDelete();
+        _context.SaveChanges();
         return order;
     }
 }

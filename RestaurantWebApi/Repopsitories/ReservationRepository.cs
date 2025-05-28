@@ -1,43 +1,47 @@
+using Microsoft.EntityFrameworkCore;
+using RestaurantWeb.DataBase;
 using RestaurantWeb.Model;
 
 namespace RestaurantWeb.Repositories;
 
-public class ReservationRepository : IReservationRepository
+public class ReservationRepository(RestaurantContext context) : IReservationRepository
 {
-    private readonly Dictionary<Guid, Reservation> _reservations = [];
+    private readonly RestaurantContext _context = context;
 
-    public IEnumerable<Reservation> GetAll()
+    public List<Reservation> GetAll()
     {
-        return _reservations.Values;
+        return _context.Reservations.ToList();
     }
 
     public Reservation GetById(Guid id)
     {
-        _reservations.TryGetValue(id, out var entity);
-        return entity;
+        return _context.Reservations.FirstOrDefault(x => x.Id == id);
     }
 
-    public void Create(Reservation table)
+    public void Create(Reservation reservation)
     {
-        _reservations.Add(table.Id, table);
+        _context.Add(reservation);
+        _context.SaveChanges();
     }
 
-    public bool TryUpdate(Guid id, Reservation updateTable)
+    public bool TryUpdate(Guid id, Reservation updateReservation)
     {
-        if (!_reservations.ContainsKey(id)) return false;
-
-        _reservations[id] = updateTable;
-        return true;
+        _context.Reservations
+            .Where(x => x.Id == id)
+            .ExecuteUpdate(x => x
+                .SetProperty(reservation => reservation.TableId, updateReservation.TableId)
+                .SetProperty(reservation => reservation.From, updateReservation.From)
+                .SetProperty(reservation => reservation.To, updateReservation.To)
+                .SetProperty(reservation => reservation.Notes, updateReservation.Notes)
+                .SetProperty(reservation => reservation.Status, updateReservation.Status));
+        return _context.SaveChanges() > 0;
     }
 
     public Reservation Delete(Guid id)
     {
-        _reservations.TryGetValue(id, out var reservation);
-        if (reservation is not null)
-        {
-            _reservations.Remove(id);
-        }
-
+        var reservation = GetById(id);
+        _context.Reservations.Where(x => x.Id == id).ExecuteDelete();
+        _context.SaveChanges();
         return reservation;
     }
 }

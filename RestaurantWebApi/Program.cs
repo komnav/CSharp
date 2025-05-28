@@ -1,42 +1,34 @@
 using FluentValidation;
-using Microsoft.OpenApi.Models;
+using Microsoft.EntityFrameworkCore;
+using RestaurantWeb.DataBase;
+using RestaurantWeb.Exceptions;
 using RestaurantWeb.Extensions;
-using RestaurantWeb.Mappers;
-using RestaurantWeb.Repositories;
-using RestaurantWeb.Services;
 using RestaurantWeb.Validations;
 
 var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddSingleton(typeof(IRepository<>), typeof(Repository<>));
-builder.Services.AddSingleton<ITableRepository, TableRepository>();
-builder.Services.AddSingleton<IReservationRepository, ReservationRepository>();
-builder.Services.AddSingleton<IOrderRepository, OrderRepository>();
-builder.Services.AddSingleton<IMenuItemRepository, MenuItemRepository>();
-builder.Services.AddSingleton<IMenuCategoryRepository, MenuCategoryRepository>();
-builder.Services.AddSingleton<IContactRepository, ContactRepository>();
-
-builder.Services.AddScoped<ITableService, TableService>();
-builder.Services.AddScoped<IReservationService, ReservationService>();
-
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
-builder.Services.AddSwaggerGen(
-    c => c.SwaggerDoc(
-        "v1", new OpenApiInfo
-        {
-            Title = "Restaurant application APIs", Version = "v1"
-        })
-);
-builder.Services.AddAutoMapper(opt
-    =>
-{
-    opt.AddMaps(typeof(TableProfile).Assembly);
-});
+
+builder.Services.AddDbContext<RestaurantContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DbConnection")));
+
+builder.AddRepositoryLayer();
+builder.Services.AddMemoryCache();
+builder.AddServiceLayer();
+builder.AddRedisServiceLayer();
+
+builder.Services.AddSwaggerGen();
+builder.AddAutoMapperLayer();
 
 builder.Services.AddValidatorsFromAssemblyContaining<TableDtoValidator>();
 var app = builder.Build();
-// Configure the HTTP request pipeline.
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<RestaurantContext>();
+    dbContext.Database.EnsureCreated();
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -45,12 +37,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-//app.UseMiddleware<ExceptionHandlerMiddleware>();
-
 app.UseAuthorization();
-app.MapServerAPIs();
-
+app.MapServerApIs();
 app.MapControllers();
-
 app.Run();

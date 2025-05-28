@@ -1,39 +1,46 @@
+using Microsoft.EntityFrameworkCore;
+using RestaurantWeb.DataBase;
 using RestaurantWeb.Model;
 
 namespace RestaurantWeb.Repositories;
 
-public class MenuItemRepository : IMenuItemRepository
+public class MenuItemRepository(RestaurantContext context) : IMenuItemRepository
 {
-    private readonly Dictionary<Guid, MenuItem> _items = [];
+    private readonly RestaurantContext _context = context;
 
-    public IEnumerable<MenuItem> GetAll()
+    public List<MenuItem> GetAll()
     {
-        return _items.Values;
+        return _context.MenuItems.ToList();
     }
 
     public MenuItem GetById(Guid id)
     {
-        _items.TryGetValue(id, out var item);
-        return item;
+        return _context.MenuItems.FirstOrDefault(x => x.Id == id);
     }
 
-    public void Create(MenuItem table)
+    public void Create(MenuItem menuItem)
     {
-        _items.Add(table.Id, table);
+        _context.Add(menuItem);
+        _context.SaveChanges();
     }
 
-    public bool TryUpdate(Guid id, MenuItem updateTable)
+    public bool TryUpdate(Guid id, MenuItem updatedItem)
     {
-        if (!_items.ContainsKey(id))
-            _items[id] = updateTable;
-        return true;
+        _context.MenuItems
+            .Where(x => x.Id == id)
+            .ExecuteUpdate(x => x
+                .SetProperty(item => item.CategoryId, updatedItem.CategoryId)
+                .SetProperty(item => item.Price, updatedItem.Price)
+                .SetProperty(item => item.Name, updatedItem.Name)
+                .SetProperty(item => item.Status, updatedItem.Status));
+        return _context.SaveChanges() > 0;
     }
 
     public MenuItem Delete(Guid id)
     {
-        _items.TryGetValue(id, out var item);
-        if (item is not null)
-            _items.Remove(id);
+        var item = GetById(id);
+        _context.MenuItems.Where(x => x.Id == id).ExecuteDelete();
+        _context.SaveChanges();
         return item;
     }
 }

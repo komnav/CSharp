@@ -1,6 +1,4 @@
-﻿
-
-using Lesson_7;
+﻿using Lesson_7;
 
 List<Person2> person = new List<Person2>
 {

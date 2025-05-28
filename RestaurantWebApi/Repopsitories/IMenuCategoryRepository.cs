@@ -4,7 +4,7 @@ namespace RestaurantWeb.Repositories;
 
 public interface IMenuCategoryRepository
 {
-    IEnumerable<MenuCategory> GetAll();
+    List<MenuCategory> GetAll();
 
     MenuCategory GetById(Guid id);
 

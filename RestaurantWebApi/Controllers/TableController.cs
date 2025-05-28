@@ -33,7 +33,7 @@ public class TableController(ITableService tableService) : ControllerBase
                 .Select(e => new { e.PropertyName, e.ErrorMessage });
             return BadRequest(new { Errors = errors });
         }
-        return Created($"/api/client/{createTable.Id}", createTable);
+        return Created($"/api/table/{createTable.Id}", createTable);
     }
 
     [HttpPut]
