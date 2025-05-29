@@ -54,8 +54,8 @@ public class TableService(
     public bool TryUpdate(Guid id, UpdateTableDto updateTable)
     {
         var serviceSideTable = tableRepository.GetById(id);
-        mapper.Map(updateTable, serviceSideTable);
-        tableRepository.TryUpdate(id, serviceSideTable);
+        var map = mapper.Map(updateTable, serviceSideTable);
+        tableRepository.TryUpdate(id, map);
         return true;
     }
 

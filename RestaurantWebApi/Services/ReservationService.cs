@@ -48,15 +48,15 @@ public class ReservationService(
             Status = reservation.Status
         };
         reservationRepository.Create(createReservation);
-        var createReservationDto = mapper.Map<ReservationDto>(createReservation);
-        return (null, createReservationDto);
+        var map = mapper.Map<ReservationDto>(createReservation);
+        return (null, map);
     }
 
     public bool TryUpdate(Guid id, UpdateReservationDto updateReservation)
     {
         var serverSidReservation = reservationRepository.GetById(id);
-        mapper.Map(updateReservation, serverSidReservation);
-        reservationRepository.TryUpdate(id, serverSidReservation);
+        var map = mapper.Map(updateReservation, serverSidReservation);
+        reservationRepository.TryUpdate(id, map);
         return true;
     }
 

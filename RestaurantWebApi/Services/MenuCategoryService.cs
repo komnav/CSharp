@@ -1,38 +1,87 @@
+using AutoMapper;
+using FluentValidation;
 using FluentValidation.Results;
 using RestaurantWeb.DTOs.MenuCategoryDTOs;
 using RestaurantWeb.DTOs.MenuItemDTOs;
+using RestaurantWeb.Model;
+using RestaurantWeb.Repositories;
 
 namespace RestaurantWeb.Services;
 
-public class MenuCategoryService : IMenuCategoryService
+public class MenuCategoryService(
+    MenuCategoryRepository repository,
+    IMapper mapper,
+    IServiceProvider serviceProvider) : IMenuCategoryService
 {
     public List<MenuCategoryDto> GetAll()
     {
-        throw new NotImplementedException();
+        var getAll = repository.GetAll();
+        var map = mapper.Map<List<MenuCategoryDto>>(getAll);
+        return map;
     }
 
     public MenuCategoryDto GetById(Guid id)
     {
-        throw new NotImplementedException();
+        var getOrder = repository.GetById(id);
+        var map = mapper.Map<MenuCategoryDto>(getOrder);
+        return map;
     }
 
     public (ValidationResult validationResult, MenuCategoryDto dto) Create(CreateMenuCategoryDto createMenuCategory)
     {
-        throw new NotImplementedException();
+        var validator = serviceProvider.GetService<IValidator<CreateMenuCategoryDto>>();
+        if (validator != null)
+        {
+            var result = validator.Validate(createMenuCategory);
+            if (!result.IsValid)
+            {
+                return (result, null);
+            }
+        }
+
+        var newMenuCategory = new MenuCategory
+        {
+            Name = createMenuCategory.Name,
+            ParentId = createMenuCategory.ParentId
+        };
+        repository.Create(newMenuCategory);
+
+        var map = mapper.Map<MenuCategoryDto>(newMenuCategory);
+        return (null, map);
     }
 
     public bool TryUpdate(Guid id, UpdateMenuCategoryDto updateMenuCategory)
     {
-        throw new NotImplementedException();
+        var getMenuCategory = repository.GetById(id);
+        var map = mapper.Map(updateMenuCategory, getMenuCategory);
+        repository.TryUpdate(id, map);
+        return true;
     }
 
     public bool TryUpdateSpecificProperties(Guid id, PatchUpdateMenuItemDto entity)
     {
-        throw new NotImplementedException();
+        var serverSideMenuCategory = repository.GetById(id);
+        var serverMenuCategory = serverSideMenuCategory.GetType();
+        var properties = entity.GetType().GetProperties();
+        foreach (var property in properties)
+        {
+            var value = property.GetValue(entity);
+            if (value is not null)
+            {
+                var oldProperty = serverSideMenuCategory.GetType().GetProperty(property.Name);
+                if (oldProperty?.CanWrite == true)
+                    oldProperty.SetValue(serverSideMenuCategory, value);
+            }
+        }
+
+        repository.TryUpdate(id, serverSideMenuCategory);
+        mapper.Map(serverSideMenuCategory, entity);
+        return true;
     }
 
     public bool TryDelete(Guid id)
     {
-        throw new NotImplementedException();
+        var delete = repository.Delete(id);
+        return delete is not null;
     }
 }
