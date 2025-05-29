@@ -21,6 +21,10 @@ public static class ServiceExtensions
     {
         builder.Services.AddScoped<ITableService, TableService>();
         builder.Services.AddScoped<IReservationService, ReservationService>();
+        builder.Services.AddScoped<IOrderService, OrderService>();
+        builder.Services.AddScoped<IMenuItemService, MenuItemService>();
+        builder.Services.AddScoped<IMenuCategoryService, MenuCategoryService>();
+        builder.Services.AddScoped<IContactService, ContactService>();
     }
 
     public static void AddRedisServiceLayer(this WebApplicationBuilder builder)
