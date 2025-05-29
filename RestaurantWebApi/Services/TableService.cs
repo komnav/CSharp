@@ -14,10 +14,10 @@ public class TableService(
     IServiceProvider serviceProvider)
     : ITableService
 {
-    public IEnumerable<TableDto> GetAll()
+    public List<TableDto> GetAll()
     {
         var table = tableRepository.GetAll();
-        var tableDto = mapper.Map<IEnumerable<TableDto>>(table);
+        var tableDto = mapper.Map<List<TableDto>>(table);
         return tableDto;
     }
 
@@ -39,6 +39,7 @@ public class TableService(
                 return (result, null);
             }
         }
+
         var createTable = new Table()
         {
             Number = table.Number,
@@ -75,6 +76,7 @@ public class TableService(
                     oldProperty.SetValue(serviceTable, value);
             }
         }
+
         tableRepository.TryUpdate(id, serviceTable);
         serviceTable.ToDto();
         return true;

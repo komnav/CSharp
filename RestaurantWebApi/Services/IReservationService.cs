@@ -5,7 +5,7 @@ namespace RestaurantWeb.Services;
 
 public interface IReservationService
 {
-    IEnumerable<ReservationDto> GetAll();
+    List<ReservationDto> GetAll();
 
     ReservationDto GetById(Guid id);
 

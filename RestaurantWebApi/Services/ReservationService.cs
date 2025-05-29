@@ -13,10 +13,10 @@ public class ReservationService(
     IServiceProvider serviceProvider)
     : IReservationService
 {
-    public IEnumerable<ReservationDto> GetAll()
+    public List<ReservationDto> GetAll()
     {
         var reservations = reservationRepository.GetAll();
-        var reservationsDto = mapper.Map<IEnumerable<ReservationDto>>(reservations);
+        var reservationsDto = mapper.Map<List<ReservationDto>>(reservations);
         return reservationsDto;
     }
 
@@ -26,6 +26,7 @@ public class ReservationService(
         var result = mapper.Map<ReservationDto>(serviceSideReservation);
         return result;
     }
+
     public (ValidationResult validationResult, ReservationDto dto) Create(CreateReservationDto reservation)
     {
         var validator = serviceProvider.GetService<IValidator<CreateReservationDto>>();

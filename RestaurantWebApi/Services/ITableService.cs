@@ -5,7 +5,7 @@ namespace RestaurantWeb.Services;
 
 public interface ITableService
 {
-    IEnumerable<TableDto> GetAll();
+    List<TableDto> GetAll();
 
     TableDto GetById(Guid id);
 

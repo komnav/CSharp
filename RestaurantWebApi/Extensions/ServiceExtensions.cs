@@ -2,7 +2,7 @@ using RestaurantWeb.Mappers;
 using RestaurantWeb.Repositories;
 using RestaurantWeb.Services;
 
-namespace RestaurantWeb.Exceptions;
+namespace RestaurantWeb.Extensions;
 
 public static class ServiceExtensions
 {
