@@ -7,4 +7,9 @@ public class MenuCategory
     public required string Name { get; set; }
 
     public int? ParentId { get; set; }
+
+    public MenuCategory()
+    {
+        Id = Guid.NewGuid();
+    }
 }

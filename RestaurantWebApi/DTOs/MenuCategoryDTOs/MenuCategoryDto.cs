@@ -1,6 +1,10 @@
 namespace RestaurantWeb.DTOs.MenuCategoryDTOs;
 
-public class MenuCategoryDto
+public record MenuCategoryDto
 {
-    
+    public Guid Id { get; init; }
+
+    public required string Name { get; init; }
+
+    public int? ParentId { get; init; }
 }

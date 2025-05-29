@@ -1,6 +1,6 @@
 namespace RestaurantWeb.DTOs.MenuCategoryDTOs;
 
-public class PatchMenuCategoryDto
+public record PatchMenuCategoryDto
 {
-    
+    public int? ParentId { get; init; }
 }

@@ -1,6 +1,8 @@
 namespace RestaurantWeb.DTOs.ContactDTOs;
 
-public class PatchUpdateContactDto
+public record PatchUpdateContactDto
 {
-    
+    public string PhoneNumber { get; init; }
+
+    public string Address { get; init; }
 }

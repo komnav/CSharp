@@ -15,4 +15,9 @@ public class Contact
     public string PhoneNumber { get; set; }
 
     public string Address { get; set; }
+
+    public Contact()
+    {
+        Id = Guid.NewGuid();
+    }
 }

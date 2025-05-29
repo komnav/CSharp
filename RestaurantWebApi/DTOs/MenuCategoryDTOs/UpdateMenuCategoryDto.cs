@@ -1,6 +1,8 @@
 namespace RestaurantWeb.DTOs.MenuCategoryDTOs;
 
-public class UpdateMenuCategoryDto
+public record UpdateMenuCategoryDto
 {
-    
+    public required string Name { get; init; }
+
+    public int? ParentId { get; init; }
 }

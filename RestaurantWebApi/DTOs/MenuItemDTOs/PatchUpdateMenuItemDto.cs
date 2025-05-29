@@ -1,6 +1,8 @@
+using RestaurantWeb.Model.Enums;
+
 namespace RestaurantWeb.DTOs.MenuItemDTOs;
 
-public class PatchUpdateMenuItemDto
+public record PatchUpdateMenuItemDto
 {
-    
+    public MenuItemStatus Status { get; init; }
 }

@@ -16,4 +16,9 @@ public class MenuItem
     public required string Name { get; set; }
 
     public MenuItemStatus Status { get; set; }
+
+    public MenuItem()
+    {
+        Id = Guid.NewGuid();
+    }
 }

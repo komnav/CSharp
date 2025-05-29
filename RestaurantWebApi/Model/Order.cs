@@ -17,4 +17,9 @@ public class Order
     public DateTime DateTime { get; set; }
 
     public OrdersStatus Status { get; set; }
+
+    public Order()
+    {
+        Id = Guid.NewGuid();
+    }
 }
