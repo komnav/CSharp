@@ -14,7 +14,7 @@ public interface IMenuCategoryService
 
     bool TryUpdate(Guid id, UpdateMenuCategoryDto updateMenuCategory);
 
-    bool TryUpdateSpecificProperties(Guid id, PatchUpdateMenuItemDto entity);
+    bool TryUpdateSpecificProperties(Guid id, PatchMenuCategoryDto entity);
 
     bool TryDelete(Guid id);
 }

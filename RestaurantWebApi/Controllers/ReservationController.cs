@@ -22,7 +22,7 @@ public class ReservationController(IReservationService service) : ControllerBase
     }
 
     [HttpGet]
-    public IEnumerable<ReservationDto> GetAll()
+    public List<ReservationDto> GetAll()
     {
         return service.GetAll();
     }

@@ -58,7 +58,7 @@ public class MenuCategoryService(
         return true;
     }
 
-    public bool TryUpdateSpecificProperties(Guid id, PatchUpdateMenuItemDto entity)
+    public bool TryUpdateSpecificProperties(Guid id, PatchMenuCategoryDto entity)
     {
         var serverSideMenuCategory = repository.GetById(id);
         var serverMenuCategory = serverSideMenuCategory.GetType();
