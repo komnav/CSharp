@@ -2,8 +2,8 @@ using AutoMapper;
 using FluentValidation;
 using FluentValidation.Results;
 using RestaurantWeb.DTOs.OrderDTOs;
+using RestaurantWeb.Infrastructure.Repositories;
 using RestaurantWeb.Model;
-using RestaurantWeb.Repositories;
 
 namespace RestaurantWeb.Services;
 

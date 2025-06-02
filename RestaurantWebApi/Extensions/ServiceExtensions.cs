@@ -1,5 +1,5 @@
+using RestaurantWeb.Infrastructure.Repositories;
 using RestaurantWeb.Mappers;
-using RestaurantWeb.Repositories;
 using RestaurantWeb.Services;
 
 namespace RestaurantWeb.Extensions;

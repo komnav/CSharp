@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using RestaurantWeb.Model;
 
-namespace RestaurantWeb.DataBase;
+namespace RestaurantWeb.Infrastructure.DataBase;
 
 public class RestaurantContext : DbContext
 {
@@ -21,4 +21,9 @@ public class RestaurantContext : DbContext
     public DbSet<MenuCategory> MenuCategories { get; set; }
 
     public DbSet<Contact> Contacts { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(RestaurantContext).Assembly);
+    }
 }

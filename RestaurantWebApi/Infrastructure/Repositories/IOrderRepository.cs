@@ -1,6 +1,6 @@
 using RestaurantWeb.Model;
 
-namespace RestaurantWeb.Repositories;
+namespace RestaurantWeb.Infrastructure.Repositories;
 
 public interface IOrderRepository
 {

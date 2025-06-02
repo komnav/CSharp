@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Caching.Memory;
 using RestaurantWeb.Model;
 
-namespace RestaurantWeb.Repositories;
+namespace RestaurantWeb.Infrastructure.Repositories;
 
 public class CachedMemberRepository(ReservationRepository decorated, IMemoryCache cache) : IReservationRepository
 {

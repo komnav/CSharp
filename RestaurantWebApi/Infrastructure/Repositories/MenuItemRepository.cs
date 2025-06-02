@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using RestaurantWeb.DataBase;
+using RestaurantWeb.Infrastructure.DataBase;
 using RestaurantWeb.Model;
 
-namespace RestaurantWeb.Repositories;
+namespace RestaurantWeb.Infrastructure.Repositories;
 
 public class MenuItemRepository(RestaurantContext context) : IMenuItemRepository
 {

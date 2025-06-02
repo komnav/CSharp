@@ -3,8 +3,8 @@ using FluentValidation;
 using FluentValidation.Results;
 using RestaurantWeb.DTOs.TableDTOs;
 using RestaurantWeb.Extensions;
+using RestaurantWeb.Infrastructure.Repositories;
 using RestaurantWeb.Model;
-using RestaurantWeb.Repositories;
 
 namespace RestaurantWeb.Services;
 

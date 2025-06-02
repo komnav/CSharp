@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using RestaurantWeb.DTOs.ReservationDTOs;
 using RestaurantWeb.DTOs.TableDTOs;
 using RestaurantWeb.Model;
-using RestaurantWeb.Repositories;
 using RestaurantWeb.Services;
 
 namespace RestaurantWeb.Controllers;

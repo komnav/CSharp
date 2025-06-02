@@ -1,8 +1,8 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-using RestaurantWeb.DataBase;
 using RestaurantWeb.Exceptions;
 using RestaurantWeb.Extensions;
+using RestaurantWeb.Infrastructure.DataBase;
 using RestaurantWeb.Validations;
 
 var builder = WebApplication.CreateBuilder(args);
