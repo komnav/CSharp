@@ -1,12 +1,15 @@
+using System.Text.Json.Serialization;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using RestaurantWeb.Extensions;
 using RestaurantWeb.Infrastructure.DataBase;
-using RestaurantWeb.Infrastructure.Interceptors;  
+using RestaurantWeb.Infrastructure.Interceptors;
 using RestaurantWeb.Validations;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+
 builder.Services.AddOpenApi();
 builder.Services.AddSingleton<AvoidDeletingContactInterceptor>();
 

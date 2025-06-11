@@ -9,7 +9,7 @@ namespace RestaurantWeb.Controllers;
 public class TableController(ITableService tableService) : ControllerBase
 {
     [HttpGet]
-    public IEnumerable<TableDto> GetAll()
+    public Task GetAll()
     {
         return tableService.GetAll();
     }
@@ -18,7 +18,7 @@ public class TableController(ITableService tableService) : ControllerBase
     public IActionResult GetById(Guid id)
     {
         var table = tableService.GetById(id);
-        if (table.Number < 0)
+        if (table is null)
             return NotFound();
         return Ok(table);
     }
@@ -26,13 +26,12 @@ public class TableController(ITableService tableService) : ControllerBase
     [HttpPost]
     public IActionResult Create(CreateTableDto createTableDto)
     {
-        var (validationResult, createTable) = tableService.Create(createTableDto);
-        if (validationResult is not null)
+        var createTable = tableService.Create(createTableDto);
+        if (createTable is null)
         {
-            var errors = validationResult.Errors
-                .Select(e => new { e.PropertyName, e.ErrorMessage });
-            return BadRequest(new { Errors = errors });
+            return BadRequest();
         }
+
         return Created($"/api/table/{createTable.Id}", createTable);
     }
 
@@ -40,7 +39,7 @@ public class TableController(ITableService tableService) : ControllerBase
     public IActionResult Update(Guid id, UpdateTableDto updateTableDto)
     {
         var table = tableService.TryUpdate(id, updateTableDto);
-        if (!table)
+        if (table.Result == false)
             return NotFound();
         return Ok();
     }
@@ -49,7 +48,7 @@ public class TableController(ITableService tableService) : ControllerBase
     public IActionResult UpdateSpecificProperties(Guid id, PatchUpdateTableDto updateTableDto)
     {
         var result = tableService.TryUpdateSpecificProperties(id, updateTableDto);
-        if (!result)
+        if (result.Result == false)
             return NotFound();
         return Ok();
     }
@@ -58,7 +57,7 @@ public class TableController(ITableService tableService) : ControllerBase
     public IActionResult Delete(Guid id)
     {
         var deleteTable = tableService.TryDelete(id);
-        if (!deleteTable)
+        if (deleteTable.Result == false)
             return NotFound();
         return Ok();
     }

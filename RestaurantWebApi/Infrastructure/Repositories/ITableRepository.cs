@@ -4,13 +4,13 @@ namespace RestaurantWeb.Infrastructure.Repositories;
 
 public interface ITableRepository
 {
-    List<Table> GetAll();
+    Task<List<Table>> GetAll();
 
-    Table GetById(Guid id);
+    Task<Table> GetById(Guid id);
 
-    void Create(Table table);
+    Task<int> Create(Table table);
 
-    bool TryUpdate(Guid id, Table updateTable);
+    Task<bool> TryUpdate(Guid id, Table updateTable);
 
-    Table Delete(Guid id);
+    Task<Table> Delete(Guid id);
 }

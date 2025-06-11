@@ -5,15 +5,15 @@ namespace RestaurantWeb.Services;
 
 public interface ITableService
 {
-    List<TableDto> GetAll();
+    Task<List<TableDto>> GetAll();
 
-    TableDto GetById(Guid id);
+    Task<TableDto> GetById(Guid id);
 
-    (ValidationResult validationResult, TableDto dto) Create(CreateTableDto table);
+    Task<TableDto> Create(CreateTableDto table);
 
-    bool TryUpdate(Guid id, UpdateTableDto updateTable);
+    Task<bool> TryUpdate(Guid id, UpdateTableDto updateTable);
 
-    bool TryUpdateSpecificProperties(Guid id, PatchUpdateTableDto entity);
+    Task<bool> TryUpdateSpecificProperties(Guid id, PatchUpdateTableDto entity);
 
-    bool TryDelete(Guid id);
+    Task<bool> TryDelete(Guid id);
 }
