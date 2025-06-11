@@ -10,9 +10,9 @@ public class Reservation
 
     public Table Table { get; set; }
 
-    public DateTime From { get; set; }
+    public DateTimeOffset From { get; set; }
 
-    public DateTime To { get; set; }
+    public DateTimeOffset To { get; set; }
 
     public string Notes { get; set; }
 

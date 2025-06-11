@@ -11,7 +11,7 @@ public record CreateOrderDto
     
     public MenuItem MenuItem { get; init; }
     
-    public DateTime DateTime { get; init; }
+    public DateTimeOffset DateTime { get; init; }
 
     public OrdersStatus Status { get; init; }
 

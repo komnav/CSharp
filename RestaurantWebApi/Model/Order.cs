@@ -14,7 +14,7 @@ public class Order
 
     public MenuItem MenuItem { get; set; }
 
-    public DateTime DateTime { get; set; }
+    public DateTimeOffset DateTime { get; set; }
 
     public OrdersStatus Status { get; set; }
 
