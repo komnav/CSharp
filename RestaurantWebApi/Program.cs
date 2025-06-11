@@ -1,16 +1,21 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-using RestaurantWeb.Exceptions;
 using RestaurantWeb.Extensions;
 using RestaurantWeb.Infrastructure.DataBase;
+using RestaurantWeb.Infrastructure.Interceptors;  
 using RestaurantWeb.Validations;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
+builder.Services.AddSingleton<AvoidDeletingContactInterceptor>();
 
-builder.Services.AddDbContext<RestaurantContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DbConnection")));
+builder.Services.AddDbContext<RestaurantContext>((cp, options) =>
+{
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DbConnection"))
+        .LogTo(Console.WriteLine, LogLevel.Information)
+        .AddInterceptors(cp.GetRequiredService<AvoidDeletingContactInterceptor>());
+});
 
 builder.AddRepositoryLayer();
 builder.Services.AddMemoryCache();
@@ -26,6 +31,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<RestaurantContext>();
+    dbContext.Database.EnsureDeleted();
     dbContext.Database.EnsureCreated();
 }
 

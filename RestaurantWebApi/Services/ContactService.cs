@@ -55,7 +55,10 @@ public class ContactService(
 
     public bool TryUpdate(Guid id, UpdateContactDto updateContactDto)
     {
-        throw new NotImplementedException();
+        var getContact = repository.GetById(id);
+        var map = mapper.Map(updateContactDto, getContact);
+        repository.TryUpdate(id, map);
+        return true;
     }
 
     public bool TryUpdateSpecificProperties(Guid id, PatchUpdateContactDto entity)
@@ -75,7 +78,7 @@ public class ContactService(
         }
 
         repository.TryUpdate(id, serverSideContact);
-        mapper.Map(serverSideContact, entity);
+        mapper.Map(entity, serverSideContact);
         return true;
     }
 

@@ -16,6 +16,8 @@ public class Contact
 
     public string Address { get; set; }
 
+    public bool IsDeleted { get; set; }
+
     public Contact()
     {
         Id = Guid.NewGuid();

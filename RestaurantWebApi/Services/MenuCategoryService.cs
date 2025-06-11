@@ -9,7 +9,7 @@ using RestaurantWeb.Model;
 namespace RestaurantWeb.Services;
 
 public class MenuCategoryService(
-    MenuCategoryRepository repository,
+    IMenuCategoryRepository repository,
     IMapper mapper,
     IServiceProvider serviceProvider) : IMenuCategoryService
 {

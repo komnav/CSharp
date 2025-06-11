@@ -6,7 +6,7 @@ public class Reservation
 {
     public Guid Id { get; set; }
 
-    public int TableId { get; set; }
+    public Guid TableId { get; set; }
 
     public Table Table { get; set; }
 

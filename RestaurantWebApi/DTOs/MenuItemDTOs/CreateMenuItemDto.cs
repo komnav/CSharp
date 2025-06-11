@@ -4,7 +4,7 @@ namespace RestaurantWeb.DTOs.MenuItemDTOs;
 
 public record CreateMenuItemDto
 {
-    public int? CategoryId { get; init; }
+    public Guid? CategoryId { get; init; }
 
     public decimal Price { get; init; }
 

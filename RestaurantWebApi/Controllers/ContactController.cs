@@ -6,7 +6,7 @@ namespace RestaurantWeb.Controllers;
 
 [ApiController]
 [Route("Contact")]
-public class ContactController(ContactService service) : ControllerBase
+public class ContactController(IContactService service) : ControllerBase
 {
     [HttpGet("{id:guid}")]
     public IActionResult GetById(Guid id)
@@ -24,7 +24,7 @@ public class ContactController(ContactService service) : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult CreateOrder([FromBody] CreateContactDto contactDto)
+    public IActionResult Create([FromBody] CreateContactDto contactDto)
     {
         var (validationResult, createContact) = service.Create(contactDto);
         if (validationResult is not null)

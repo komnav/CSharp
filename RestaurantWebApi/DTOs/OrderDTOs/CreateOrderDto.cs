@@ -5,9 +5,9 @@ namespace RestaurantWeb.DTOs.OrderDTOs;
 
 public record CreateOrderDto
 {
-    public int TableId { get; init; }
+    public Guid TableId { get; init; }
 
-    public int FoodId { get; init; }
+    public Guid FoodId { get; init; }
     
     public MenuItem MenuItem { get; init; }
     

@@ -20,7 +20,7 @@ public class ContactRepository(RestaurantContext context) : IContactRepository
 
     public void Create(Contact contact)
     {
-        _context.Add(context);
+        _context.Add(contact);
         _context.SaveChanges();
     }
 
