@@ -6,11 +6,11 @@ public class OrderDetail
 {
     public Guid Id { get; set; }
 
-    public int OrderId { get; set; }
+    public Guid OrderId { get; set; }
 
     public Order Order { get; set; }
 
-    public int MenuItemId { get; set; }
+    public Guid MenuItemId { get; set; }
 
     public MenuItem MenuItem { get; set; }
 
