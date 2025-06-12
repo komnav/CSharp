@@ -2,23 +2,22 @@ using AutoMapper;
 using FluentValidation;
 using FluentValidation.Results;
 using RestaurantWeb.DTOs.TableDTOs;
+using RestaurantWeb.Exceptions;
 using RestaurantWeb.Extensions;
 using RestaurantWeb.Infrastructure.Repositories;
 using RestaurantWeb.Model;
+using RestaurantWeb.Model.Enums;
 
 namespace RestaurantWeb.Services;
 
 public class TableService(
-    ITableRepository tableRepository,
-    IMapper mapper,
-    IServiceProvider serviceProvider)
+    ITableRepository tableRepository)
     : ITableService
 {
     public async Task<List<TableDto>> GetAll()
     {
         var table = await tableRepository.GetAll();
-        var tableDto = mapper.Map<List<TableDto>>(table);
-        return tableDto.Select(s => new TableDto
+        return table.Select(s => new TableDto
         {
             Number = s.Number,
             Capacity = s.Capacity,
@@ -28,9 +27,13 @@ public class TableService(
 
     public async Task<TableDto> GetById(Guid id)
     {
-        var serviceSideTable = await tableRepository.GetById(id);
-        var result = mapper.Map<TableDto>(serviceSideTable);
-        return result;
+        var table = await tableRepository.GetById(id);
+        return new TableDto()
+        {
+            Number = table.Number,
+            Capacity = table.Capacity,
+            Type = table.Type
+        };
     }
 
     public async Task<TableDto> Create(CreateTableDto table)
@@ -41,21 +44,28 @@ public class TableService(
             Capacity = table.Capacity,
             Type = table.Type
         };
-        await tableRepository.Create(createTable);
-        var createTableDto = mapper.Map<TableDto>(createTable);
+        var affectedRows = await tableRepository.Create(createTable);
+        if (affectedRows < 0)
+        {
+            throw new ResourceWasNotCreatedException(nameof(createTable));
+        }
+
         return new TableDto()
         {
-            Number = createTableDto.Number,
-            Capacity = createTableDto.Capacity,
-            Type = createTableDto.Type
+            Number = createTable.Number,
+            Capacity = createTable.Capacity,
+            Type = createTable.Type
         };
     }
 
-    public async Task<bool> TryUpdate(Guid id, UpdateTableDto updateTable)
+    public async Task<bool> TryUpdate(Guid id, int number, int capacity, TableType type)
     {
-        var serviceSideTable = await tableRepository.GetById(id);
-        var map = mapper.Map(updateTable, serviceSideTable);
-        await tableRepository.TryUpdate(id, map);
+        var tryToUpdate = await tableRepository.TryUpdate(id, number, capacity, type);
+        if (!tryToUpdate)
+        {
+            throw new ResourceWasNotUpdatedException(nameof(tryToUpdate));
+        }
+
         return true;
     }
 
@@ -77,7 +87,7 @@ public class TableService(
             }
         }
 
-        await tableRepository.TryUpdate(id, serviceTable);
+        await tableRepository.TryUpdate(id, serviceTable.Number, serviceTable.Capacity, serviceTable.Type);
         serviceTable.ToDto();
         return true;
     }
@@ -85,6 +95,11 @@ public class TableService(
     public async Task<bool> TryDelete(Guid id)
     {
         var deleteTable = await tableRepository.Delete(id);
-        return deleteTable is not null;
+        if (deleteTable < 0)
+        {
+            throw new ResourceWasNotDeletedException(nameof(deleteTable));
+        }
+
+        return true;
     }
 }
