@@ -12,7 +12,7 @@ public interface ITableService
 
     Task<TableDto> Create(CreateTableDto table);
 
-    Task<bool> TryUpdate(Guid id, int number, int capacity, TableType type);
+    Task<bool> TryUpdate(Guid id, UpdateTableDto request);
 
     Task<bool> TryUpdateSpecificProperties(Guid id, PatchUpdateTableDto entity);
 

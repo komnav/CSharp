@@ -5,15 +5,15 @@ namespace RestaurantWeb.Services;
 
 public interface IReservationService
 {
-    List<ReservationDto> GetAll();
+    Task<List<ReservationDto>> GetAll();
 
-    ReservationDto GetById(Guid id);
+    Task<ReservationDto> GetById(Guid id);
 
-    (ValidationResult validationResult, ReservationDto dto) Create(CreateReservationDto reservation);
+    Task<ReservationDto> Create(CreateReservationDto reservation);
 
-    bool TryUpdate(Guid id, UpdateReservationDto updateReservation);
+    Task<bool> TryUpdate(Guid id, UpdateReservationDto updateReservation);
 
-    bool TryUpdateSpecificProperties(Guid id, PatchUpdateReservationDto entity);
+    Task<bool> TryUpdateSpecificProperties(Guid id, PatchUpdateReservationDto entity);
 
-    bool TryDelete(Guid id);
+    Task<bool> TryDelete(Guid id);
 }

@@ -2,43 +2,48 @@ using AutoMapper;
 using FluentValidation;
 using FluentValidation.Results;
 using RestaurantWeb.DTOs.OrderDTOs;
+using RestaurantWeb.DTOs.ReservationDTOs;
+using RestaurantWeb.Exceptions;
 using RestaurantWeb.Infrastructure.Repositories;
 using RestaurantWeb.Model;
 
 namespace RestaurantWeb.Services;
 
-public class OrderService(
-    IOrderRepository orderRepository,
-    IMapper mapper,
-    IServiceProvider serviceProvider) : IOrderService
+public class OrderService(IOrderRepository orderRepository) : IOrderService
 {
-    public List<OrderDto> GetAll()
-    {
-        var getAllOrder = orderRepository.GetAll();
-        var map = mapper.Map<List<OrderDto>>(getAllOrder);
-        return map;
-    }
+    private readonly IOrderRepository _orderRepository = orderRepository;
 
-    public OrderDto GetById(Guid id)
+    public async Task<List<OrderDto>> GetAll()
     {
-        var getById = orderRepository.GetById(id);
-        var map = mapper.Map<OrderDto>(getById);
-        return map;
-    }
-
-    public (ValidationResult validationResult, OrderDto dto) Create(CreateOrderDto orderDto)
-    {
-        var validator = serviceProvider.GetService<IValidator<CreateOrderDto>>();
-        if (validator != null)
+        var orders = await _orderRepository.GetAll();
+        return orders.Select(s => new OrderDto()
         {
-            var result = validator.Validate(orderDto);
-            if (!result.IsValid)
-            {
-                return (result, null);
-            }
-        }
+            Id = s.Id,
+            TableId = s.TableId,
+            FoodId = s.FoodId,
+            MenuItem = s.MenuItem,
+            DateTime = s.DateTime,
+            Status = s.Status
+        }).ToList();
+    }
 
-        var newOrder = new Order
+    public async Task<OrderDto> GetById(Guid id)
+    {
+        var reservation = await _orderRepository.GetById(id);
+        return new OrderDto()
+        {
+            Id = reservation.Id,
+            TableId = reservation.TableId,
+            FoodId = reservation.FoodId,
+            MenuItem = reservation.MenuItem,
+            DateTime = reservation.DateTime,
+            Status = reservation.Status
+        };
+    }
+
+    public async Task<OrderDto> Create(CreateOrderDto orderDto)
+    {
+        var createOrder = new Order()
         {
             TableId = orderDto.TableId,
             FoodId = orderDto.FoodId,
@@ -46,44 +51,67 @@ public class OrderService(
             DateTime = orderDto.DateTime,
             Status = orderDto.Status
         };
-        orderRepository.Create(newOrder);
+        var create = await _orderRepository.Create(createOrder);
+        if (create < 0)
+            throw new ResourceWasNotCreatedException(nameof(createOrder));
 
-        var map = mapper.Map<OrderDto>(newOrder);
-        return (null, map);
+        return new OrderDto()
+        {
+            Id = createOrder.Id,
+            TableId = createOrder.TableId,
+            FoodId = createOrder.FoodId,
+            MenuItem = createOrder.MenuItem,
+            DateTime = createOrder.DateTime,
+            Status = createOrder.Status
+        };
     }
 
-    public bool TryUpdate(Guid id, UpdateOrderDto updateOrder)
+    public async Task<bool> TryUpdate(Guid id, UpdateOrderDto updateOrderDto)
     {
-        var getOrder = orderRepository.GetById(id);
-        var map = mapper.Map(updateOrder, getOrder);
-        orderRepository.TryUpdate(id, map);
+        var update = await _orderRepository.TryUpdate(
+            id,
+            updateOrderDto.TableId,
+            updateOrderDto.FoodId,
+            updateOrderDto.DateTime,
+            updateOrderDto.Status);
+        if (!update)
+            throw new ResourceWasNotUpdatedException(nameof(updateOrderDto));
+
         return true;
     }
 
-    public bool TryUpdateSpecificProperties(Guid id, PatchUpdateOrderDto entity)
+    public async Task<bool> TryUpdateSpecificProperties(Guid id, PatchUpdateOrderDto entity)
     {
-        var serverSideOrder = orderRepository.GetById(id);
-        var serverOrder = serverSideOrder.GetType();
+        var serverSide = await _orderRepository.GetById(id);
         var properties = entity.GetType().GetProperties();
         foreach (var property in properties)
         {
             var value = property.GetValue(entity);
             if (value is not null)
             {
-                var oldProperty = serverSideOrder.GetType().GetProperty(property.Name);
+                var oldProperty = serverSide.GetType().GetProperty(property.Name);
                 if (oldProperty?.CanWrite == true)
-                    oldProperty.SetValue(serverSideOrder, value);
+                    oldProperty.SetValue(serverSide, value);
             }
         }
 
-        orderRepository.TryUpdate(id, serverSideOrder);
-        mapper.Map(serverSideOrder, entity);
+        var update = await _orderRepository.TryUpdate(
+            id,
+            serverSide.TableId,
+            serverSide.FoodId,
+            serverSide.DateTime,
+            serverSide.Status);
+        if (!update)
+            throw new ResourceWasNotUpdatedException(nameof(entity));
+
         return true;
     }
 
-    public bool TryDelete(Guid id)
+    public async Task<bool> TryDelete(Guid id)
     {
-        var tryDelete = orderRepository.Delete(id);
-        return tryDelete is not null;
+        var delete = await _orderRepository.Delete(id);
+        if (delete < 0)
+            return false;
+        return true;
     }
 }

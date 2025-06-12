@@ -2,87 +2,112 @@ using AutoMapper;
 using FluentValidation;
 using FluentValidation.Results;
 using RestaurantWeb.DTOs.MenuItemDTOs;
+using RestaurantWeb.DTOs.ReservationDTOs;
+using RestaurantWeb.Exceptions;
 using RestaurantWeb.Infrastructure.Repositories;
 using RestaurantWeb.Model;
 
 namespace RestaurantWeb.Services;
 
-public class MenuItemService(
-    IMenuItemRepository repository,
-    IMapper mapper,
-    IServiceProvider serviceProvider) : IMenuItemService
+public class MenuItemService(IMenuItemRepository repository) : IMenuItemService
 {
-    public List<MenuItemDto> GetAll()
+    private readonly IMenuItemRepository _repository = repository;
+
+    public async Task<List<MenuItemDto>> GetAll()
     {
-        var getAll = repository.GetAll();
-        var map = mapper.Map<List<MenuItemDto>>(getAll);
-        return map;
+        var reservations = await _repository.GetAll();
+        return reservations.Select(s => new MenuItemDto()
+        {
+            Id = s.Id,
+            CategoryId = s.CategoryId,
+            Price = s.Price,
+            Name = s.Name,
+            Status = s.Status
+        }).ToList();
     }
 
-    public MenuItemDto GetById(Guid id)
+    public async Task<MenuItemDto> GetById(Guid id)
     {
-        var get = repository.GetById(id);
-        var map = mapper.Map<MenuItemDto>(get);
-        return map;
-    }
-
-    public (ValidationResult validationResult, MenuItemDto dto) Create(CreateMenuItemDto menuItemDto)
-    {
-        var validator = serviceProvider.GetService<IValidator<CreateMenuItemDto>>();
-        if (validator != null)
+        var menuItem = await _repository.GetById(id);
+        return new MenuItemDto()
         {
-            var result = validator.Validate(menuItemDto);
-            if (!result.IsValid)
-            {
-                return (result, null);
-            }
-        }
-
-        var newMenuItem = new MenuItem
-        {
-            CategoryId = menuItemDto.CategoryId,
-            Name = menuItemDto.Name,
-            Price = menuItemDto.Price,
-            Status = menuItemDto.Status
+            Id = menuItem.Id,
+            CategoryId = menuItem.CategoryId,
+            Price = menuItem.Price,
+            Name = menuItem.Name,
+            Status = menuItem.Status
         };
-        repository.Create(newMenuItem);
-
-        var map = mapper.Map<MenuItemDto>(newMenuItem);
-        return (null, map);
     }
 
-    public bool TryUpdate(Guid id, UpdateMenuItemDto updateMenuItemDto)
+    public async Task<MenuItemDto> Create(CreateMenuItemDto menuItem)
     {
-        var get = repository.GetById(id);
-        var map = mapper.Map(updateMenuItemDto, get);
-        repository.TryUpdate(id, map);
+        var createMenuItem = new MenuItem()
+        {
+            CategoryId = menuItem.CategoryId,
+            Price = menuItem.Price,
+            Name = menuItem.Name,
+            Status = menuItem.Status
+        };
+        var create = await _repository.Create(createMenuItem);
+        if (create < 0)
+            throw new ResourceWasNotCreatedException(nameof(createMenuItem));
+
+        return new MenuItemDto()
+        {
+            Id = createMenuItem.Id,
+            CategoryId = createMenuItem.CategoryId,
+            Price = createMenuItem.Price,
+            Name = createMenuItem.Name,
+            Status = createMenuItem.Status
+        };
+    }
+
+    public async Task<bool> TryUpdate(Guid id, UpdateMenuItemDto updateMenuItem)
+    {
+        var update = await _repository.TryUpdate(
+            id,
+            updateMenuItem.CategoryId,
+            updateMenuItem.Price,
+            updateMenuItem.Name,
+            updateMenuItem.Status);
+        if (!update)
+            throw new ResourceWasNotUpdatedException(nameof(update));
+
         return true;
     }
 
-    public bool TryUpdateSpecificProperties(Guid id, PatchUpdateMenuItemDto entity)
+    public async Task<bool> TryUpdateSpecificProperties(Guid id, PatchUpdateMenuItemDto entity)
     {
-        var serverSideMenuItem = repository.GetById(id);
-        var serverReservation = serverSideMenuItem.GetType();
+        var serverSide = await _repository.GetById(id);
         var properties = entity.GetType().GetProperties();
         foreach (var property in properties)
         {
             var value = property.GetValue(entity);
             if (value is not null)
             {
-                var oldProperty = serverSideMenuItem.GetType().GetProperty(property.Name);
+                var oldProperty = serverSide.GetType().GetProperty(property.Name);
                 if (oldProperty?.CanWrite == true)
-                    oldProperty.SetValue(serverSideMenuItem, value);
+                    oldProperty.SetValue(serverSide, value);
             }
         }
 
-        repository.TryUpdate(id, serverSideMenuItem);
-        mapper.Map(serverSideMenuItem, entity);
+        var update = await _repository.TryUpdate(
+            id,
+            serverSide.CategoryId,
+            serverSide.Price,
+            serverSide.Name,
+            serverSide.Status);
+        if (!update)
+            throw new ResourceWasNotUpdatedException(nameof(entity));
+
         return true;
     }
 
-    public bool TryDelete(Guid id)
+    public async Task<bool> TryDelete(Guid id)
     {
-        var delete = repository.Delete(id);
-        return delete is not null;
+        var delete = await _repository.Delete(id);
+        if (delete < 0)
+            return false;
+        return true;
     }
 }

@@ -7,9 +7,9 @@ public record OrderDto
 {
     public Guid Id { get; init; }
 
-    public int TableId { get; init; }
+    public Guid TableId { get; init; }
 
-    public int FoodId { get; init; }
+    public Guid FoodId { get; init; }
 
     public MenuItem MenuItem { get; init; }
 

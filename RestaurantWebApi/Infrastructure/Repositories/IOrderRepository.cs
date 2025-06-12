@@ -11,7 +11,7 @@ public interface IOrderRepository
 
     Task<int> Create(Order table);
 
-    Task<bool> TryUpdate(Guid id, Guid tableId, Guid foodId, DateTime dateTime, OrdersStatus ordersStatus);
+    Task<bool> TryUpdate(Guid id, Guid tableId, Guid foodId, DateTimeOffset dateTime, OrdersStatus ordersStatus);
 
     Task<int> Delete(Guid id);
 }

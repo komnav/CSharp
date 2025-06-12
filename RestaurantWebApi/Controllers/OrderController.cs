@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using RestaurantWeb.DTOs.MenuItemDTOs;
 using RestaurantWeb.DTOs.OrderDTOs;
 using RestaurantWeb.Services;
 
@@ -9,56 +10,52 @@ namespace RestaurantWeb.Controllers;
 public class OrderController(IOrderService service) : ControllerBase
 {
     [HttpGet("{id:guid}")]
-    public IActionResult GetById(Guid id)
+    public async Task<IActionResult> GetById(Guid id)
     {
-        var orderDto = service.GetById(id);
-        if (orderDto.TableId < 0)
-            return NotFound();
+        var orderDto = await service.GetById(id);
         return Ok(orderDto);
     }
 
     [HttpGet]
-    public List<OrderDto> GetAll()
+    public async Task<List<OrderDto>> GetAll()
     {
-        return service.GetAll();
+        return await service.GetAll();
     }
 
     [HttpPost]
-    public IActionResult CreateOrder([FromBody] CreateOrderDto orderDto)
+    public async Task<IActionResult> CreateOrder([FromBody] CreateOrderDto orderDto)
     {
-        var (validationResult, createOrder) = service.Create(orderDto);
-        if (validationResult is not null)
+        var createOrder = await service.Create(orderDto);
+        if (createOrder is null)
         {
-            var errors = validationResult.Errors
-                .Select(e => new { e.PropertyName, e.ErrorMessage });
-            return BadRequest(new { Errors = errors });
+            return BadRequest();
         }
 
         return Created($"/api/order/{createOrder.Id}", createOrder);
     }
 
     [HttpDelete]
-    public IActionResult Delete(Guid id)
+    public async Task<IActionResult> Delete(Guid id)
     {
-        var result = service.TryDelete(id);
+        var result = await service.TryDelete(id);
         if (!result)
             return BadRequest();
         return Ok();
     }
 
     [HttpPut]
-    public IActionResult Update(Guid id, [FromBody] UpdateOrderDto orderDto)
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateOrderDto orderDto)
     {
-        var result = service.TryUpdate(id, orderDto);
+        var result = await service.TryUpdate(id, orderDto);
         if (!result)
             return BadRequest();
         return Ok();
     }
 
     [HttpPatch]
-    public IActionResult UpdateSpecificProperties(Guid id, PatchUpdateOrderDto orderDto)
+    public async Task<IActionResult> UpdateSpecificProperties(Guid id, PatchUpdateOrderDto orderDto)
     {
-        var result = service.TryUpdateSpecificProperties(id, orderDto);
+        var result = await service.TryUpdateSpecificProperties(id, orderDto);
         if (!result)
             return BadRequest();
         return Ok();

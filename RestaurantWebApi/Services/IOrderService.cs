@@ -6,15 +6,15 @@ namespace RestaurantWeb.Services;
 
 public interface IOrderService
 {
-    List<OrderDto> GetAll();
+    Task<List<OrderDto>> GetAll();
 
-    OrderDto GetById(Guid id);
+    Task<OrderDto> GetById(Guid id);
 
-    (ValidationResult validationResult, OrderDto dto) Create(CreateOrderDto orderDto);
+    Task<OrderDto> Create(CreateOrderDto orderDto);
 
-    bool TryUpdate(Guid id, UpdateOrderDto updateOrder);
+    Task<bool> TryUpdate(Guid id, UpdateOrderDto updateOrder);
 
-    bool TryUpdateSpecificProperties(Guid id, PatchUpdateOrderDto entity);
+    Task<bool> TryUpdateSpecificProperties(Guid id, PatchUpdateOrderDto entity);
 
-    bool TryDelete(Guid id);
+    Task<bool> TryDelete(Guid id);
 }

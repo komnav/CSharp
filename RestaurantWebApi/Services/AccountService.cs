@@ -6,8 +6,7 @@ using RestaurantWeb.Model.Enums;
 
 namespace RestaurantWeb.Services;
 
-public class AccountService(
-    IAccountRepository repository) : IAccountService
+public class AccountService(IAccountRepository repository) : IAccountService
 {
     private readonly IAccountRepository _repository = repository;
 

@@ -58,9 +58,9 @@ public class TableService(
         };
     }
 
-    public async Task<bool> TryUpdate(Guid id, int number, int capacity, TableType type)
+    public async Task<bool> TryUpdate(Guid id, UpdateTableDto request)
     {
-        var tryToUpdate = await tableRepository.TryUpdate(id, number, capacity, type);
+        var tryToUpdate = await tableRepository.TryUpdate(id, request.Number, request.Capacity, request.Type);
         if (!tryToUpdate)
         {
             throw new ResourceWasNotUpdatedException(nameof(tryToUpdate));

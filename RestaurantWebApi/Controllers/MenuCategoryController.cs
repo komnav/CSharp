@@ -9,56 +9,49 @@ namespace RestaurantWeb.Controllers;
 public class MenuCategoryController(IMenuCategoryService service) : ControllerBase
 {
     [HttpGet("{id:guid}")]
-    public IActionResult GetById(Guid id)
+    public async Task<IActionResult> GetById(Guid id)
     {
-        var orderDto = service.GetById(id);
+        var orderDto = await service.GetById(id);
         if (orderDto.Name is null)
             return NotFound();
         return Ok(orderDto);
     }
 
     [HttpGet]
-    public List<MenuCategoryDto> GetAll()
+    public async Task<List<MenuCategoryDto>> GetAll()
     {
-        return service.GetAll();
+        return await service.GetAll();
     }
 
     [HttpPost]
-    public IActionResult CreateOrder([FromBody] CreateMenuCategoryDto menuCategoryDto)
+    public async Task<IActionResult> CreateOrder([FromBody] CreateMenuCategoryDto menuCategoryDto)
     {
-        var (validationResult, createMenuCategory) = service.Create(menuCategoryDto);
-        if (validationResult is not null)
-        {
-            var errors = validationResult.Errors
-                .Select(e => new { e.PropertyName, e.ErrorMessage });
-            return BadRequest(new { Errors = errors });
-        }
-
-        return Created($"/api/menuCategory/{createMenuCategory.Id}", createMenuCategory);
+        var create = await service.Create(menuCategoryDto);
+        return Ok(create);
     }
 
     [HttpDelete]
-    public IActionResult Delete(Guid id)
+    public async Task<IActionResult> Delete(Guid id)
     {
-        var result = service.TryDelete(id);
+        var result = await service.TryDelete(id);
         if (!result)
             return BadRequest();
         return Ok();
     }
 
     [HttpPut]
-    public IActionResult Update(Guid id, [FromBody] UpdateMenuCategoryDto menuCategoryDto)
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateMenuCategoryDto menuCategoryDto)
     {
-        var result = service.TryUpdate(id, menuCategoryDto);
+        var result = await service.TryUpdate(id, menuCategoryDto);
         if (!result)
             return BadRequest();
         return Ok();
     }
 
     [HttpPatch]
-    public IActionResult UpdateSpecificProperties(Guid id, PatchMenuCategoryDto menuCategoryDto)
+    public async Task<IActionResult> UpdateSpecificProperties(Guid id, PatchMenuCategoryDto menuCategoryDto)
     {
-        var result = service.TryUpdateSpecificProperties(id, menuCategoryDto);
+        var result = await service.TryUpdateSpecificProperties(id, menuCategoryDto);
         if (!result)
             return BadRequest();
         return Ok();

@@ -6,15 +6,15 @@ namespace RestaurantWeb.Services;
 
 public interface IMenuCategoryService
 {
-    List<MenuCategoryDto> GetAll();
+    Task<List<MenuCategoryDto>> GetAll();
 
-    MenuCategoryDto GetById(Guid id);
+    Task<MenuCategoryDto> GetById(Guid id);
 
-    (ValidationResult validationResult, MenuCategoryDto dto) Create(CreateMenuCategoryDto createMenuCategory);
+    Task<MenuCategoryDto> Create(CreateMenuCategoryDto createMenuCategory);
 
-    bool TryUpdate(Guid id, UpdateMenuCategoryDto updateMenuCategory);
+    Task<bool> TryUpdate(Guid id, UpdateMenuCategoryDto updateMenuCategory);
 
-    bool TryUpdateSpecificProperties(Guid id, PatchMenuCategoryDto entity);
+    Task<bool> TryUpdateSpecificProperties(Guid id, PatchMenuCategoryDto entity);
 
-    bool TryDelete(Guid id);
+    Task<bool> TryDelete(Guid id);
 }

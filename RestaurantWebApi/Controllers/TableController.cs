@@ -9,24 +9,24 @@ namespace RestaurantWeb.Controllers;
 public class TableController(ITableService tableService) : ControllerBase
 {
     [HttpGet]
-    public Task GetAll()
+    public async Task<List<TableDto>> GetAll()
     {
-        return tableService.GetAll();
+        return await tableService.GetAll();
     }
 
     [HttpGet("{id:guid}")]
-    public IActionResult GetById(Guid id)
+    public async Task<IActionResult> GetById(Guid id)
     {
-        var table = tableService.GetById(id);
+        var table = await tableService.GetById(id);
         if (table is null)
             return NotFound();
         return Ok(table);
     }
 
     [HttpPost]
-    public IActionResult Create(CreateTableDto createTableDto)
+    public async Task<IActionResult> Create(CreateTableDto createTableDto)
     {
-        var createTable = tableService.Create(createTableDto);
+        var createTable = await tableService.Create(createTableDto);
         if (createTable is null)
         {
             return BadRequest();
@@ -36,28 +36,28 @@ public class TableController(ITableService tableService) : ControllerBase
     }
 
     [HttpPut]
-    public IActionResult Update(Guid id, UpdateTableDto updateTableDto)
+    public async Task<IActionResult> Update(Guid id, UpdateTableDto updateTableDto)
     {
-        var table = tableService.TryUpdate(id, updateTableDto);
-        if (table.Result == false)
+        var table = await tableService.TryUpdate(id, updateTableDto);
+        if (!table)
             return NotFound();
         return Ok();
     }
 
     [HttpPatch]
-    public IActionResult UpdateSpecificProperties(Guid id, PatchUpdateTableDto updateTableDto)
+    public async Task<IActionResult> UpdateSpecificProperties(Guid id, PatchUpdateTableDto updateTableDto)
     {
-        var result = tableService.TryUpdateSpecificProperties(id, updateTableDto);
-        if (result.Result == false)
+        var result = await tableService.TryUpdateSpecificProperties(id, updateTableDto);
+        if (!result)
             return NotFound();
         return Ok();
     }
 
     [HttpDelete]
-    public IActionResult Delete(Guid id)
+    public async Task<IActionResult> Delete(Guid id)
     {
-        var deleteTable = tableService.TryDelete(id);
-        if (deleteTable.Result == false)
+        var deleteTable = await tableService.TryDelete(id);
+        if (!deleteTable)
             return NotFound();
         return Ok();
     }

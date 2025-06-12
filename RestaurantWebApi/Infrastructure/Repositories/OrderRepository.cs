@@ -26,7 +26,7 @@ public class OrderRepository(RestaurantContext context) : IOrderRepository
     }
 
     public async Task<bool> TryUpdate(
-        Guid id, Guid tableId, Guid foodId, DateTime dateTime, OrdersStatus status)
+        Guid id, Guid tableId, Guid foodId, DateTimeOffset dateTime, OrdersStatus status)
     {
         await _context.Orders
             .Where(x => x.Id == id)

@@ -7,7 +7,7 @@ public class MenuItem
 {
     public Guid Id { get; set; }
 
-    public Guid? CategoryId { get; set; }
+    public Guid CategoryId { get; set; }
 
     public MenuCategory? Category { get; set; }
 

@@ -7,7 +7,7 @@ public record ReservationDto()
 {
     public Guid Id { get; init; }
     
-    public int TableId { get; init; }
+    public Guid TableId { get; init; }
 
     public Table Table { get; init; }
     

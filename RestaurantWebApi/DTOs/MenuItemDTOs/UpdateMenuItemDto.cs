@@ -4,7 +4,7 @@ namespace RestaurantWeb.DTOs.MenuItemDTOs;
 
 public class UpdateMenuItemDto
 {
-    public int? CategoryId { get; init; }
+    public Guid CategoryId { get; init; }
 
     public decimal Price { get; init; }
 

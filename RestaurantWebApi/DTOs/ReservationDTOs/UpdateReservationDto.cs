@@ -5,7 +5,9 @@ namespace RestaurantWeb.DTOs.ReservationDTOs;
 
 public record UpdateReservationDto()
 {
-    public int TableId { get; init; }
+    public Guid TableId { get; init; }
+
+    public Guid CustomerId { get; set; }
 
     public DateTimeOffset From { get; init; }
 
