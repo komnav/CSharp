@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using RestaurantWeb.Infrastructure.DataBase;
 using RestaurantWeb.Model;
+using RestaurantWeb.Model.Enums;
 
 namespace RestaurantWeb.Infrastructure.Repositories;
 
@@ -8,40 +9,37 @@ public class OrderRepository(RestaurantContext context) : IOrderRepository
 {
     private readonly RestaurantContext _context = context;
 
-    public List<Order> GetAll()
+    public async Task<List<Order>> GetAll()
     {
-        return _context.Orders.ToList();
+        return await _context.Orders.ToListAsync();
     }
 
-    public Order GetById(Guid id)
+    public async Task<Order> GetById(Guid id)
     {
-        return _context.Orders.FirstOrDefault(x => x.Id == id);
+        return await _context.Orders.FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public void Create(Order order)
+    public async Task<int> Create(Order order)
     {
-        _context.Add(order);
-        _context.SaveChanges();
+        await _context.AddAsync(order);
+        return await _context.SaveChangesAsync();
     }
 
-    public bool TryUpdate(Guid id, Order updatedOrder)
+    public async Task<bool> TryUpdate(
+        Guid id, Guid tableId, Guid foodId, DateTime dateTime, OrdersStatus status)
     {
-        _context.Orders
+        await _context.Orders
             .Where(x => x.Id == id)
-            .ExecuteUpdate(x => x
-                .SetProperty(order => order.TableId, updatedOrder.TableId)
-                .SetProperty(order => order.FoodId, updatedOrder.FoodId)
-                .SetProperty(order => order.MenuItem, updatedOrder.MenuItem)
-                .SetProperty(order => order.DateTime, updatedOrder.DateTime)
-                .SetProperty(order => order.Status, updatedOrder.Status));
-        return _context.SaveChanges() > 0;
+            .ExecuteUpdateAsync(x => x
+                .SetProperty(order => order.TableId, tableId)
+                .SetProperty(order => order.FoodId, foodId)
+                .SetProperty(order => order.DateTime, dateTime)
+                .SetProperty(order => order.Status, status));
+        return await _context.SaveChangesAsync() > 0;
     }
 
-    public Order Delete(Guid id)
+    public async Task<int> Delete(Guid id)
     {
-        var order = GetById(id);
-        _context.Orders.Where(x => x.Id == id).ExecuteDelete();
-        _context.SaveChanges();
-        return order;
+        return await _context.Orders.Where(x => x.Id == id).ExecuteDeleteAsync();
     }
 }

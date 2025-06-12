@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using RestaurantWeb.Infrastructure.DataBase;
 using RestaurantWeb.Model;
+using RestaurantWeb.Model.Enums;
 
 namespace RestaurantWeb.Infrastructure.Repositories;
 
@@ -8,39 +9,36 @@ public class MenuItemRepository(RestaurantContext context) : IMenuItemRepository
 {
     private readonly RestaurantContext _context = context;
 
-    public List<MenuItem> GetAll()
+    public async Task<List<MenuItem>> GetAll()
     {
-        return _context.MenuItems.ToList();
+        return await _context.MenuItems.ToListAsync();
     }
 
-    public MenuItem GetById(Guid id)
+    public async Task<MenuItem> GetById(Guid id)
     {
-        return _context.MenuItems.FirstOrDefault(x => x.Id == id);
+        return await _context.MenuItems.FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public void Create(MenuItem menuItem)
+    public async Task<int> Create(MenuItem menuItem)
     {
-        _context.Add(menuItem);
-        _context.SaveChanges();
+        await _context.AddAsync(menuItem);
+        return await _context.SaveChangesAsync();
     }
 
-    public bool TryUpdate(Guid id, MenuItem updatedItem)
+    public async Task<bool> TryUpdate(Guid id, Guid categoryId, decimal price, string name, MenuItemStatus status)
     {
-        _context.MenuItems
+        await _context.MenuItems
             .Where(x => x.Id == id)
-            .ExecuteUpdate(x => x
-                .SetProperty(item => item.CategoryId, updatedItem.CategoryId)
-                .SetProperty(item => item.Price, updatedItem.Price)
-                .SetProperty(item => item.Name, updatedItem.Name)
-                .SetProperty(item => item.Status, updatedItem.Status));
-        return _context.SaveChanges() > 0;
+            .ExecuteUpdateAsync(x => x
+                .SetProperty(item => item.CategoryId, categoryId)
+                .SetProperty(item => item.Price, price)
+                .SetProperty(item => item.Name, name)
+                .SetProperty(item => item.Status, status));
+        return await _context.SaveChangesAsync() > 0;
     }
 
-    public MenuItem Delete(Guid id)
+    public async Task<int> Delete(Guid id)
     {
-        var item = GetById(id);
-        _context.MenuItems.Where(x => x.Id == id).ExecuteDelete();
-        _context.SaveChanges();
-        return item;
+        return await _context.MenuItems.Where(x => x.Id == id).ExecuteDeleteAsync();
     }
 }

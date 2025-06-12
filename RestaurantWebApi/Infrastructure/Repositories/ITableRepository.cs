@@ -1,4 +1,5 @@
 using RestaurantWeb.Model;
+using RestaurantWeb.Model.Enums;
 
 namespace RestaurantWeb.Infrastructure.Repositories;
 
@@ -10,7 +11,7 @@ public interface ITableRepository
 
     Task<int> Create(Table table);
 
-    Task<bool> TryUpdate(Guid id, Table updateTable);
+    Task<bool> TryUpdate(Guid id, int number, int capacity, TableType type);
 
-    Task<Table> Delete(Guid id);
+    Task<int> Delete(Guid id);
 }

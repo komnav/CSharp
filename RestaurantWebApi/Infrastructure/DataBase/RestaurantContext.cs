@@ -22,6 +22,10 @@ public class RestaurantContext : DbContext
 
     public DbSet<Contact> Contacts { get; set; }
 
+    public DbSet<User> Users { get; set; }
+
+    public DbSet<OrderDetail> OrderDetails { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(RestaurantContext).Assembly);

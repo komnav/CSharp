@@ -8,37 +8,34 @@ public class MenuCategoryRepository(RestaurantContext context) : IMenuCategoryRe
 {
     private readonly RestaurantContext _context = context;
 
-    public List<MenuCategory> GetAll()
+    public async Task<List<MenuCategory>> GetAll()
     {
-        return _context.MenuCategories.ToList();
+        return await _context.MenuCategories.ToListAsync();
     }
 
-    public MenuCategory GetById(Guid id)
+    public async Task<MenuCategory> GetById(Guid id)
     {
-        return _context.MenuCategories.FirstOrDefault(x => x.Id == id);
+        return await _context.MenuCategories.FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public void Create(MenuCategory menuCategory)
+    public async Task<int> Create(MenuCategory menuCategory)
     {
-        _context.Add(menuCategory);
-        _context.SaveChanges();
+        await _context.AddAsync(menuCategory);
+        return await _context.SaveChangesAsync();
     }
 
-    public bool TryUpdate(Guid id, MenuCategory updateMenuCategory)
+    public async Task<bool> TryUpdate(Guid id, string name, int? parentId)
     {
-        _context.MenuCategories
+        await _context.MenuCategories
             .Where(x => x.Id == id)
-            .ExecuteUpdate(x => x
-                .SetProperty(category => category.Name, updateMenuCategory.Name)
-                .SetProperty(category => category.ParentId, updateMenuCategory.ParentId));
-        return _context.SaveChanges() > 0;
+            .ExecuteUpdateAsync(x => x
+                .SetProperty(category => category.Name, name)
+                .SetProperty(category => category.ParentId, parentId));
+        return await _context.SaveChangesAsync() > 0;
     }
 
-    public MenuCategory Delete(Guid id)
+    public async Task<int> Delete(Guid id)
     {
-        var menuCategory = GetById(id);
-        _context.MenuCategories.Where(x => x.Id == id).ExecuteDelete();
-        _context.SaveChanges();
-        return menuCategory;
+        return await _context.MenuItems.Where(x => x.Id == id).ExecuteDeleteAsync();
     }
 }

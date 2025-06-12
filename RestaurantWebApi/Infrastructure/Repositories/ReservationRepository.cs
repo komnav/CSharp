@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using RestaurantWeb.Infrastructure.DataBase;
 using RestaurantWeb.Model;
+using RestaurantWeb.Model.Enums;
 
 namespace RestaurantWeb.Infrastructure.Repositories;
 
@@ -8,40 +9,47 @@ public class ReservationRepository(RestaurantContext context) : IReservationRepo
 {
     private readonly RestaurantContext _context = context;
 
-    public List<Reservation> GetAll()
+    public async Task<List<Reservation>> GetAll()
     {
-        return _context.Reservations.ToList();
+        return await _context.Reservations.ToListAsync();
     }
 
-    public Reservation GetById(Guid id)
+    public async Task<Reservation> GetById(Guid id)
     {
-        return _context.Reservations.FirstOrDefault(x => x.Id == id);
+        return
+            await _context.Reservations.FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public void Create(Reservation reservation)
+    public async Task<int> Create(Reservation reservation)
     {
-        _context.Add(reservation);
-        _context.SaveChanges();
+        await _context.AddAsync(reservation);
+        return await _context.SaveChangesAsync();
     }
 
-    public bool TryUpdate(Guid id, Reservation updateReservation)
+    public async Task<bool> TryUpdate(
+        Guid id,
+        Guid tableId,
+        Guid customerId,
+        DateTimeOffset from,
+        DateTimeOffset to,
+        string notes,
+        ReservationStatus status)
     {
-        _context.Reservations
+        await _context.Reservations
             .Where(x => x.Id == id)
-            .ExecuteUpdate(x => x
-                .SetProperty(reservation => reservation.TableId, updateReservation.TableId)
-                .SetProperty(reservation => reservation.From, updateReservation.From)
-                .SetProperty(reservation => reservation.To, updateReservation.To)
-                .SetProperty(reservation => reservation.Notes, updateReservation.Notes)
-                .SetProperty(reservation => reservation.Status, updateReservation.Status));
-        return _context.SaveChanges() > 0;
+            .ExecuteUpdateAsync(x => x
+                .SetProperty(reservation => reservation.TableId, tableId)
+                .SetProperty(reservation => reservation.UserId, customerId)
+                .SetProperty(reservation => reservation.From, from)
+                .SetProperty(reservation => reservation.To, to)
+                .SetProperty(reservation => reservation.Notes, notes)
+                .SetProperty(reservation => reservation.Status, status));
+        return await _context.SaveChangesAsync() > 0;
     }
 
-    public Reservation Delete(Guid id)
+    public async Task<int> Delete(Guid id)
     {
-        var reservation = GetById(id);
-        _context.Reservations.Where(x => x.Id == id).ExecuteDelete();
-        _context.SaveChanges();
-        return reservation;
+        return
+            await _context.Reservations.Where(x => x.Id == id).ExecuteDeleteAsync();
     }
 }

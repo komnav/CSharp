@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Caching.Memory;
 using RestaurantWeb.Model;
+using RestaurantWeb.Model.Enums;
 
 namespace RestaurantWeb.Infrastructure.Repositories;
 
@@ -8,7 +9,7 @@ public class CachedMemberRepository(ReservationRepository decorated, IMemoryCach
     private readonly IMemoryCache _cache = cache;
     private readonly ReservationRepository _decorated = decorated;
 
-    public List<Reservation> GetAll()
+    public Task<List<Reservation>> GetAll()
     {
         string key = $"Reservation";
         return _cache.GetOrCreate(
@@ -20,7 +21,7 @@ public class CachedMemberRepository(ReservationRepository decorated, IMemoryCach
             });
     }
 
-    public Reservation GetById(Guid id)
+    public Task<Reservation> GetById(Guid id)
     {
         string key = $"Reservation-{id}";
         return _cache.GetOrCreate(
@@ -32,8 +33,16 @@ public class CachedMemberRepository(ReservationRepository decorated, IMemoryCach
             });
     }
 
-    public void Create(Reservation table) => _decorated.Create(table);
-    public bool TryUpdate(Guid id, Reservation updateTable) => _decorated.TryUpdate(id, updateTable);
+    public Task<int> Create(Reservation table) => _decorated.Create(table);
 
-    public Reservation Delete(Guid id) => _decorated.Delete(id);
+    public Task<bool> TryUpdate(
+        Guid id,
+        Guid tableId,
+        Guid customerId,
+        DateTimeOffset from,
+        DateTimeOffset to,
+        string notes,
+        ReservationStatus status) => _decorated.TryUpdate(id, tableId, customerId, from, to, notes, status);
+
+    public Task<int> Delete(Guid id) => _decorated.Delete(id);
 }

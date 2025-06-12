@@ -1,16 +1,24 @@
 using RestaurantWeb.Model;
+using RestaurantWeb.Model.Enums;
 
 namespace RestaurantWeb.Infrastructure.Repositories;
 
 public interface IReservationRepository
 {
-    List<Reservation> GetAll();
+    Task<List<Reservation>> GetAll();
 
-    Reservation GetById(Guid id);
+    Task<Reservation> GetById(Guid id);
 
-    void Create(Reservation table);
+    Task<int> Create(Reservation table);
 
-    bool TryUpdate(Guid id, Reservation updateTable);
+    Task<bool> TryUpdate(
+        Guid id,
+        Guid tableId,
+        Guid customerId,
+        DateTimeOffset from,
+        DateTimeOffset to,
+        string notes,
+        ReservationStatus status);
 
-    Reservation Delete(Guid id);
+    Task<int> Delete(Guid id);
 }

@@ -8,6 +8,10 @@ public class Reservation
 
     public Guid TableId { get; set; }
 
+    public Guid UserId { get; set; }
+
+    public User Cutomer { get; set; }
+
     public Table Table { get; set; }
 
     public DateTimeOffset From { get; set; }

@@ -4,13 +4,13 @@ namespace RestaurantWeb.Infrastructure.Repositories;
 
 public interface IMenuCategoryRepository
 {
-    List<MenuCategory> GetAll();
+    Task<List<MenuCategory>> GetAll();
 
-    MenuCategory GetById(Guid id);
+    Task<MenuCategory> GetById(Guid id);
 
-    void Create(MenuCategory table);
+    Task<int> Create(MenuCategory table);
 
-    bool TryUpdate(Guid id, MenuCategory updateTable);
+    Task<bool> TryUpdate(Guid id, string name, int? parentId);
 
-    MenuCategory Delete(Guid id);
+    Task<int> Delete(Guid id);
 }

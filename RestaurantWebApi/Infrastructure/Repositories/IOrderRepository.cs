@@ -1,16 +1,17 @@
 using RestaurantWeb.Model;
+using RestaurantWeb.Model.Enums;
 
 namespace RestaurantWeb.Infrastructure.Repositories;
 
 public interface IOrderRepository
 {
-    List<Order> GetAll();
+    Task<List<Order>> GetAll();
 
-    Order GetById(Guid id);
+    Task<Order> GetById(Guid id);
 
-    void Create(Order table);
+    Task<int> Create(Order table);
 
-    bool TryUpdate(Guid id, Order updateTable);
+    Task<bool> TryUpdate(Guid id, Guid tableId, Guid foodId, DateTime dateTime, OrdersStatus ordersStatus);
 
-    Order Delete(Guid id);
+    Task<int> Delete(Guid id);
 }

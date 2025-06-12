@@ -14,7 +14,7 @@ public static class ServiceExtensions
         builder.Services.AddScoped<IOrderRepository, OrderRepository>();
         builder.Services.AddScoped<IMenuItemRepository, MenuItemRepository>();
         builder.Services.AddScoped<IMenuCategoryRepository, MenuCategoryRepository>();
-        builder.Services.AddScoped<IContactRepository, ContactRepository>();
+        builder.Services.AddScoped<IAccountRepository, AccountRepository>();
     }
 
     public static void AddServiceLayer(this WebApplicationBuilder builder)
