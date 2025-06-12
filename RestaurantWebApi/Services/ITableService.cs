@@ -1,5 +1,6 @@
 using FluentValidation.Results;
 using RestaurantWeb.DTOs.TableDTOs;
+using RestaurantWeb.Model.Enums;
 
 namespace RestaurantWeb.Services;
 
@@ -11,7 +12,7 @@ public interface ITableService
 
     Task<TableDto> Create(CreateTableDto table);
 
-    Task<bool> TryUpdate(Guid id, UpdateTableDto updateTable);
+    Task<bool> TryUpdate(Guid id, int number, int capacity, TableType type);
 
     Task<bool> TryUpdateSpecificProperties(Guid id, PatchUpdateTableDto entity);
 
