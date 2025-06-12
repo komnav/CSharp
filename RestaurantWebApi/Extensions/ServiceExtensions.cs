@@ -47,7 +47,6 @@ public static class ServiceExtensions
             opt.AddMaps(typeof(OrderProfile).Assembly);
             opt.AddMaps(typeof(MenuItemProfile).Assembly);
             opt.AddMaps(typeof(MenuCategoryProfile).Assembly);
-            opt.AddMaps(typeof(ContactProfile).Assembly);
         });
     }
 }
