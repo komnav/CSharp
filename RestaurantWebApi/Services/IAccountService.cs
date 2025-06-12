@@ -1,12 +1,11 @@
-using RestaurantWeb.DTOs.ContactDTOs;
-using FluentValidation.Results;
-using RestaurantWeb.Model;
+using RestaurantWeb.DTOs.AccountDTOs.Requests;
+using RestaurantWeb.DTOs.AccountDTOs.Responses;
 
 namespace RestaurantWeb.Services;
 
 public interface IAccountService
 {
-    Task<ContactDto> Create(CreateContactDto contact);
-    
-    Task<ContactDto> Login(string username, string password);
+    Task<AuthResponse> Create(RegisterUserRequest request);
+
+    Task<AuthResponse> Login(LoginRequestModel request);
 }
