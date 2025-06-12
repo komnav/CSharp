@@ -10,6 +10,6 @@ public class TableConfiguration : IEntityTypeConfiguration<Table>
     {
         tableBuilder.HasIndex(x => x.Id);
         tableBuilder.Property(x => x.Id).ValueGeneratedOnAdd();
-        tableBuilder.Property(p => p.Number).IsUnicode();
+        tableBuilder.HasIndex(p => p.Number).IsUnique();
     }
 }

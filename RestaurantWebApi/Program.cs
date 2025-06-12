@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using RestaurantWeb.Extensions;
 using RestaurantWeb.Infrastructure.DataBase;
 using RestaurantWeb.Infrastructure.Interceptors;
+using RestaurantWeb.Middlewares;
 using RestaurantWeb.Validations;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,13 +32,6 @@ builder.AddAutoMapperLayer();
 builder.Services.AddValidatorsFromAssemblyContaining<TableDtoValidator>();
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    var dbContext = scope.ServiceProvider.GetRequiredService<RestaurantContext>();
-    dbContext.Database.EnsureDeleted();
-    dbContext.Database.EnsureCreated();
-}
-
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -45,6 +39,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<ExceptionHandlerMiddleware>();
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapServerApIs();

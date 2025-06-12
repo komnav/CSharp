@@ -7,7 +7,7 @@ namespace RestaurantWeb.Services;
 
 public class MenuCategoryService(IMenuCategoryRepository repository) : IMenuCategoryService
 {
-    private readonly IMenuCategoryRepository _repository;
+    private readonly IMenuCategoryRepository _repository = repository;
 
     public async Task<List<MenuCategoryDto>> GetAll()
     {
