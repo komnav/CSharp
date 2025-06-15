@@ -12,13 +12,19 @@ builder.Services.AddControllers()
     .AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 builder.Services.AddOpenApi();
-builder.Services.AddSingleton<AvoidDeletingContactInterceptor>();
+builder.Services
+    .AddScoped<AvoidDeletingContactInterceptor>()
+    .AddScoped<ConnectionInterceptor>()
+    .AddScoped<TransactionInterceptor>();
 
 builder.Services.AddDbContext<RestaurantContext>((cp, options) =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("DbConnection"))
         .LogTo(Console.WriteLine, LogLevel.Information)
-        .AddInterceptors(cp.GetRequiredService<AvoidDeletingContactInterceptor>());
+        .AddInterceptors(
+            cp.GetRequiredService<AvoidDeletingContactInterceptor>(),
+            cp.GetRequiredService<ConnectionInterceptor>(),
+            cp.GetRequiredService<TransactionInterceptor>());
 });
 
 builder.AddRepositoryLayer();

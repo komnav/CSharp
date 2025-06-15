@@ -88,7 +88,6 @@ public class TableService(
         }
 
         await tableRepository.TryUpdate(id, serviceTable.Number, serviceTable.Capacity, serviceTable.Type);
-        serviceTable.ToDto();
         return true;
     }
 
