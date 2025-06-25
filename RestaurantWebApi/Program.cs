@@ -35,3 +35,7 @@ app.UseAuthorization();
 app.MapServerApIs();
 app.MapControllers();
 app.Run();
+
+public partial class Program
+{
+}

@@ -1,3 +1,5 @@
+using System.Diagnostics;
+using System.Diagnostics.Metrics;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -10,12 +12,14 @@ public static class OpenTelemetryExtension
     public static void AddOpenTelemetryExtension(this WebApplicationBuilder builder)
     {
         builder.Services.AddOpenTelemetry()
-            .ConfigureResource(resource => resource.AddService("RestaurantWeb"))
+            .ConfigureResource(resource => resource.AddService(DiagnosticsConfig.ServiceName))
             .WithMetrics(metrics =>
             {
                 metrics
                     .AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation();
+
+                metrics.AddMeter(DiagnosticsConfig.Meter.Name);
 
                 metrics.AddOtlpExporter();
             })
@@ -30,4 +34,13 @@ public static class OpenTelemetryExtension
             });
         builder.Logging.AddOpenTelemetry(logging => logging.AddOtlpExporter());
     }
+}
+
+public static class DiagnosticsConfig
+{
+    public const string ServiceName = "RestaurantWeb";
+
+    public static Meter Meter = new(ServiceName);
+
+    public static Counter<int> TableCounter = Meter.CreateCounter<int>("table.count");
 }
