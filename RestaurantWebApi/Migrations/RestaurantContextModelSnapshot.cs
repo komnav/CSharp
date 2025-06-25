@@ -62,13 +62,15 @@ namespace RestaurantWeb.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int?>("ParentId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("MenuCategories");
                 });
@@ -95,6 +97,9 @@ namespace RestaurantWeb.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("MenuItems");
                 });
@@ -201,7 +206,6 @@ namespace RestaurantWeb.Migrations
                         .HasColumnType("integer");
 
                     b.Property<int>("Number")
-                        .IsUnicode(true)
                         .HasColumnType("integer");
 
                     b.Property<int>("Type")
@@ -210,6 +214,9 @@ namespace RestaurantWeb.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("Id");
+
+                    b.HasIndex("Number")
+                        .IsUnique();
 
                     b.ToTable("Tables");
                 });

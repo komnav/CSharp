@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using RestaurantWeb.Infrastructure.DataBase;
+using RestaurantWeb.Infrastructure.Interceptors;
 using RestaurantWeb.Infrastructure.Repositories;
 using RestaurantWeb.Mappers;
 using RestaurantWeb.Services;
@@ -48,5 +51,26 @@ public static class ServiceExtensions
             opt.AddMaps(typeof(MenuItemProfile).Assembly);
             opt.AddMaps(typeof(MenuCategoryProfile).Assembly);
         });
+    }
+
+    public static void AddDbContextLayer(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddDbContext<RestaurantContext>((cp, options) =>
+        {
+            options.UseNpgsql(builder.Configuration.GetConnectionString("DbConnection"))
+                .LogTo(Console.WriteLine, LogLevel.Information)
+                .AddInterceptors(
+                    cp.GetRequiredService<AvoidDeletingContactInterceptor>(),
+                    cp.GetRequiredService<ConnectionInterceptor>(),
+                    cp.GetRequiredService<TransactionInterceptor>());
+        });
+    }
+
+    public static void AddInterceptorsLayer(this WebApplicationBuilder builder)
+    {
+        builder.Services
+            .AddScoped<AvoidDeletingContactInterceptor>()
+            .AddScoped<ConnectionInterceptor>()
+            .AddScoped<TransactionInterceptor>();
     }
 }

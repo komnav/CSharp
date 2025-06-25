@@ -1,39 +1,23 @@
 using System.Text.Json.Serialization;
 using FluentValidation;
-using Microsoft.EntityFrameworkCore;
 using RestaurantWeb.Extensions;
-using RestaurantWeb.Infrastructure.DataBase;
-using RestaurantWeb.Infrastructure.Interceptors;
+using RestaurantWeb.Loggers;
 using RestaurantWeb.Middlewares;
 using RestaurantWeb.Validations;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.SendLog();
+
 builder.Services.AddControllers()
     .AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 builder.Services.AddOpenApi();
-builder.Services
-    .AddScoped<AvoidDeletingContactInterceptor>()
-    .AddScoped<ConnectionInterceptor>()
-    .AddScoped<TransactionInterceptor>();
 
-builder.Services.AddDbContext<RestaurantContext>((cp, options) =>
-{
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DbConnection"))
-        .LogTo(Console.WriteLine, LogLevel.Information)
-        .AddInterceptors(
-            cp.GetRequiredService<AvoidDeletingContactInterceptor>(),
-            cp.GetRequiredService<ConnectionInterceptor>(),
-            cp.GetRequiredService<TransactionInterceptor>());
-});
+builder.AddExtensions();
 
-builder.AddRepositoryLayer();
 builder.Services.AddMemoryCache();
-builder.AddServiceLayer();
-builder.AddRedisServiceLayer();
-
 builder.Services.AddSwaggerGen();
-builder.AddAutoMapperLayer();
 
 builder.Services.AddValidatorsFromAssemblyContaining<TableDtoValidator>();
 var app = builder.Build();
