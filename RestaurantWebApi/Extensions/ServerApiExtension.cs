@@ -9,7 +9,7 @@ public static class ServerApiExtension
 {
     public static void MapServerApIs(this WebApplication app)
     {
-        app.MapGet("Serverinfo", ()
+        app.MapGet("ServerInfo", ()
             =>
         {
             return Results.Ok(new { Info = "Bank management server", Version = "v1" });
