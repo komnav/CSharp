@@ -1,26 +1,47 @@
 using System.Text.Json.Serialization;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using RestaurantWeb.Extensions;
-using RestaurantWeb.Loggers;
+using RestaurantWeb.Infrastructure.DataBase;
 using RestaurantWeb.Middlewares;
+using RestaurantWeb.Model;
+using RestaurantWeb.Model.Enums;
 using RestaurantWeb.Validations;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.SendLog();
+builder.JwtAuthServiceExtensions();
+builder.Services.AddAuthorization();
+//builder.SendLog();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 builder.Services.AddOpenApi();
-
 builder.AddExtensions();
-
 builder.Services.AddMemoryCache();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddValidatorsFromAssemblyContaining<TableDtoValidator>();
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<RestaurantContext>();
+    dbContext.Database.Migrate();
+    if (!dbContext.Users.Any())
+    {
+        var user = new User
+        {
+            UserName = "superAdmin",
+            Password = "12345678",
+            Role = UserRoles.SuperAdmin
+        };
+
+        dbContext.Users.Add(user);
+        dbContext.SaveChanges();
+    }
+}
 
 if (app.Environment.IsDevelopment())
 {
@@ -31,6 +52,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseMiddleware<ExceptionHandlerMiddleware>();
 app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapServerApIs();
 app.MapControllers();

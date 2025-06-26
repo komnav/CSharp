@@ -24,6 +24,6 @@ public class AccountController(IAccountService service) : ControllerBase
             return Unauthorized();
         }
 
-        return Ok(getUser);
+        return Ok(getUser.Token);
     }
 }
