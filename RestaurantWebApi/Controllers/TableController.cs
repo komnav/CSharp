@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RestaurantWeb.DTOs.TableDTOs;
 using RestaurantWeb.Services;
@@ -23,6 +24,7 @@ public class TableController(ITableService tableService) : ControllerBase
         return Ok(table);
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<IActionResult> Create(CreateTableDto createTableDto)
     {

@@ -21,4 +21,10 @@ public class AccountRepository(RestaurantContext context) : IAccountRepository
         await _context.Contacts.AddAsync(contact);
         return await _context.SaveChangesAsync();
     }
+
+    public async Task<int> Delete(string userName, string userRole)
+    {
+        return await _context.Users
+            .Where(x => x.UserName == userName && x.Role == userRole).ExecuteDeleteAsync();
+    }
 }

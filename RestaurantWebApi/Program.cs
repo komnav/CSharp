@@ -1,12 +1,14 @@
 using System.Text.Json.Serialization;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using RestaurantWeb.Extensions;
 using RestaurantWeb.Infrastructure.DataBase;
 using RestaurantWeb.Middlewares;
 using RestaurantWeb.Model;
 using RestaurantWeb.Model.Enums;
 using RestaurantWeb.Validations;
+using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,7 +22,16 @@ builder.Services.AddControllers()
 builder.Services.AddOpenApi();
 builder.AddExtensions();
 builder.Services.AddMemoryCache();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("oauth", new OpenApiSecurityScheme()
+    {
+        In = ParameterLocation.Header,
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey
+    });
+    options.OperationFilter<SecurityRequirementsOperationFilter>();
+});
 
 builder.Services.AddValidatorsFromAssemblyContaining<TableDtoValidator>();
 var app = builder.Build();

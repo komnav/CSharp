@@ -11,4 +11,6 @@ public interface IAccountService
     Task<AuthResponse> Login(LoginRequestModel request);
 
     string CreateToken(User user);
+
+    Task<int> DeleteUserByRole(string userName, string role);
 }

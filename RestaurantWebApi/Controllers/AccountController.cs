@@ -26,4 +26,13 @@ public class AccountController(IAccountService service) : ControllerBase
 
         return Ok(getUser.Token);
     }
+
+    [HttpDelete]
+    public async Task<IActionResult> Delete(string userName, string role)
+    {
+        var tryDelete = await service.DeleteUserByRole(userName, role);
+        if (tryDelete > 0)
+            return Ok();
+        return BadRequest();
+    }
 }

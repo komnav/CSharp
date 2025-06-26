@@ -1,6 +1,3 @@
-using AutoMapper;
-using FluentValidation;
-using FluentValidation.Results;
 using RestaurantWeb.DTOs.ReservationDTOs;
 using RestaurantWeb.Exceptions;
 using RestaurantWeb.Infrastructure.Repositories;
@@ -41,6 +38,12 @@ public class ReservationService(IReservationRepository reservationRepository)
 
     public async Task<ReservationDto> Create(CreateReservationDto reservation)
     {
+        var checkForDuplicate =
+            await FindExistingReservation(reservation.From, reservation.To, reservation.TableId);
+
+        if (checkForDuplicate != null)
+            throw new ResourceWasNotDeletedException("Reservation table already exists");
+
         var createReservation = new Reservation()
         {
             TableId = reservation.TableId,
@@ -66,6 +69,12 @@ public class ReservationService(IReservationRepository reservationRepository)
 
     public async Task<bool> TryUpdate(Guid id, UpdateReservationDto updateReservation)
     {
+        var checkForDuplicate =
+            await FindExistingReservation(updateReservation.From, updateReservation.To, updateReservation.TableId);
+
+        if (checkForDuplicate != null)
+            throw new ResourceWasNotDeletedException("Reservation table already exists");
+
         var update = await reservationRepository.TryUpdate(
             id,
             updateReservation.TableId,
@@ -115,5 +124,23 @@ public class ReservationService(IReservationRepository reservationRepository)
         if (delete < 0)
             return false;
         return true;
+    }
+
+    private async Task<List<ReservationDto>> FindExistingReservation(DateTimeOffset from, DateTimeOffset to,
+        Guid tableId)
+    {
+        var getAll = await reservationRepository.GetAll();
+        var existRes = getAll
+            .Where(x => x.TableId == tableId && x.From < to && x.To > from);
+
+        return existRes.Select(s => new ReservationDto()
+        {
+            Id = s.Id,
+            TableId = s.TableId,
+            From = s.From,
+            To = s.To,
+            Notes = s.Notes,
+            Status = s.Status
+        }).ToList();
     }
 }

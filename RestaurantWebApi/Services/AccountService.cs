@@ -38,7 +38,7 @@ public class AccountService(IAccountRepository repository, IOptions<JwtSettingsO
         var create = await _repository.Create(contact, user);
         if (create <= 0)
             throw new ResourceWasNotCreatedException($"User: {user.UserName} was not created");
-        
+
         var token = CreateToken(user);
 
         return new AuthResponse { Token = token };
@@ -65,6 +65,14 @@ public class AccountService(IAccountRepository repository, IOptions<JwtSettingsO
         };
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return tokenHandler.WriteToken(token);
+    }
+
+    public async Task<int> DeleteUserByRole(string userName, string role)
+    {
+        var deleteUser = await _repository.Delete(userName, role);
+        if (deleteUser > 0)
+            return deleteUser;
+        throw new ResourceWasNotDeletedException("User was not deleted");
     }
 
     public async Task<AuthResponse> Login(LoginRequestModel request)
